@@ -111,6 +111,7 @@ class Szene(SzenenListe):
             akt.aktualisiere(dt)
 
         for ele in self.liste:
+            print(ele)
             ele.aktualisiere(dt)
             if ele.sichtbar:
                 ele.zeichne(self.flaeche)

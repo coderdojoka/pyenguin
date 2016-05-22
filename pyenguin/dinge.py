@@ -127,7 +127,7 @@ class SzenenListe(ElterDing):
 
         alte_liste = was._elter
         if alte_liste is not None:
-            alte_liste.ist_raus(was)
+            alte_liste.raus(was)
 
         was._elter = self
         self.liste.append(was)
@@ -197,6 +197,7 @@ class BewegbaresSzenenDing(Bewegbar, SichtbaresSzenenDing):
     def __init__(self, breite, hoehe, elter=None):
         SichtbaresSzenenDing.__init__(self, elter=elter)
         Bewegbar.__init__(self, breite, hoehe)
+        self.setze_position(self.szene.breite/2, self.szene.hoehe/2)
 
     @property
     def abstand_rechts(self):

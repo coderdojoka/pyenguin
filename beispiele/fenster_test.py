@@ -1,7 +1,6 @@
-import pygame
+from pyenguin import *
 
 __author__ = 'Mark Weinreuter'
-from py2cd import *
 
 aktuelles_fenster = Fenster()
 
@@ -36,16 +35,15 @@ def unten(a):
     af.naechstes_bild()
 
 
-Szene.fenster_szene.registriere_taste_unten(pygame.constants.K_SPACE, unten)
+Szene.fenster_szene.registriere_taste_unten(T_LEER, unten)
 
-
-BildSpeicher.liste_paket_bilder()
+BildSpeicher.liste_im_paket()
 
 g.dazu(k)
 g.dazu(f)
-g.bewegung_y = 1
+g.bewegung_y = .01
 # f.bewegung_y = 1
-f.bewegung_x = 2
+f.bewegung_x = .02
 t = Text("Hallo")
 # t.bewegung_x = .5
 # t.bewegung_y = .4

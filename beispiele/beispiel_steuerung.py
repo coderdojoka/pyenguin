@@ -1,6 +1,6 @@
-__author__ = 'Mark Weinreuter'
-
 from pyenguin import *
+
+__author__ = 'Mark Weinreuter'
 
 speed = .1
 ball_x = 3

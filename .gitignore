@@ -1,0 +1,5 @@
+.cache/
+.idea/
+pyenguin.egg-info/
+
+*.pyc

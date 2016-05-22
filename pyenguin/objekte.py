@@ -12,6 +12,10 @@ class Flaeche(_Flaeche, BewegbaresSzenenDing):
 
         self.ausschnitt = None
 
+    def als_bild_speichern(self, pfad):
+        import pygame
+        pygame.image.save(self._pyg_flaeche, pfad)
+
     def zeichne(self, flaeche):
         flaeche._pyg_flaeche.blit(self._pyg_flaeche, (self._welt_x_off + self.links, self._welt_y_off + self.oben),
                                   self.ausschnitt)

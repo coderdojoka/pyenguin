@@ -7,7 +7,9 @@ SCHWARZ = (0, 0, 0)
 ROT = (255, 0, 0)
 MATT_ROT = (220, 0, 20)
 
+
 GRAU = (70, 70, 70)
+DUNKEL_GRAU = (40, 40, 40)
 HELL_GRAU = (200, 200, 200)
 FAST_WEISS = (245, 245, 245)
 
