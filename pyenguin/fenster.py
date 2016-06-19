@@ -7,7 +7,6 @@ from pygame.constants import QUIT, MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN, 
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.gitter import Gitter
 from pyenguin.szene import Szene
-from pyenguin.tasten import Taste
 
 __author__ = 'Mark Weinreuter'
 
@@ -17,20 +16,28 @@ pygame.mixer.pre_init(44100, 16, 2, 2048)  # setup mixer to avoid sound lag
 pygame.init()
 pygame.font.init()
 
-"""
-Das aktuelle Fenster
-
-:type: Fenster
-"""
-
 
 class Fenster:
     """
-    Die Hauptklasse, die das Fenster und den Ablauf startet.
-    Es muss init() und starten() aufgerufen werden.
+    Die Klasse, um ein Fenster anzuzeigen und die Schleife zu starten.
+    Nachdem einen Instanz erstellt wurde, muss :py:meth:`~Fenster.starten()` aufgerufen werden,
+    um das Fenser zu starten.:
+
+        fenster = Fenster(400, 600, "Hallo Fenster)
+        # ... Elemente und Ereignisse erstellen/registrieren
+
+        fenster.starten()
+
+
+
     """
 
     aktuelles_fenster = None
+    """
+    Das aktuelle Fenster
+
+    :type: pyenguin.fenster.Fenster
+    """
 
     zeit_unterschied_ms = 0
     """
@@ -228,7 +235,8 @@ class Fenster:
     def entferne_aktualisierung(self, funktion):
         """
         Entfernt die Aktualisierugsfunktion.
-        :param funktion: Die Funktion, die entfernt werden soll
+
+        :param funktion: Die Funktion, die entfernt werden soll.
         :type funktion: (object) -> None
         """
         self.__aktualisiere.entferne(funktion)

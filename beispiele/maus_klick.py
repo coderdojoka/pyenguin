@@ -18,14 +18,14 @@ box = Rechteck(100, 100, 50, 50, GRUEN)
 
 
 # Wird aufgerufen, immer wenn die Maus bewegt wird
-def maus_bewegt(x,y, ereignis):
+def maus_bewegt(x, y, ereignis):
     maus_position = ereignis.pos
     print(maus_position)
 
 
 # Wird aufgerufen, immer wenn die Maus gedrueckt (geklickt) wird
-def maus_gedrueckt(x,y, ereignis):
-    maus_position = (x,y)
+def maus_gedrueckt(x, y, ereignis):
+    maus_position = (x, y)
 
     if box.punkt_innerhalb(maus_position):
         box.farbe = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))

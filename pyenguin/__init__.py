@@ -3,13 +3,15 @@ from pyenguin.dinge import Gruppe, Warte, Aktualisierbar
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.farben import *
 from pyenguin.fenster import Fenster
-from pyenguin.figur import Figur
 from pyenguin.objekte import Flaeche, Text
 from pyenguin.schrift import *
 from pyenguin.sound import HintergrundMusik
 from pyenguin.speicher import BildSpeicher, SoundSpeicher
 from pyenguin.szene import Szene
+from pyenguin.bild import BildAnimation, Bild, generiere_namen_liste
 from pyenguin.tasten import *
+from pyenguin.figur import Figur
+from pyenguin.paket import *
 
 __author__ = 'Mark Weinreuter'
 
@@ -203,7 +205,7 @@ def entferne_maus_geklickt(funktion):
 
 __HANDLER_NAMEN = list(filter(lambda s: s.find("registriere_") > -1 or s.find("entferne_") > -1, globals().keys()))
 
-__all__ = [
+__all__ = [ "Bild", "BildAnimation", "generiere_namen_liste",
     "BildSpeicher", "SoundSpeicher", "Figur", "Szene", "Fenster", "Flaeche", "Gruppe",
     "EreignisBearbeiter", "Schrift", "Text", "Rechteck", "Kreis", "Oval", "Vieleck",
     "MausZeiger", "HintergrundMusik", "Warte", "Aktualisierbar"]
@@ -211,3 +213,4 @@ __all__ = [
 __all__.extend(FARBEN_NAMEN)
 __all__.extend(TASTEN_NAMEN)
 __all__.extend(__HANDLER_NAMEN)
+__all__.extend(PAKET_NAMEN)

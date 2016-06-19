@@ -1,17 +1,13 @@
-from pyenguin.bbox import Box
+from pyenguin.bbox import Bewegbar
 
 __author__ = 'Mark Weinreuter'
 
 
-class Sichtbar:
-    def __init__(self):
-        self.sichtbar = True
-
-    def zeichne(self, flaeche):
-        raise NotImplemented("zeichne() muss überschrieben werden in: %s" % str(self))
-
-
 class SzenenDing:
+    """
+    Kleinste Einheit, die zu einer Szene gehört.
+    Diese hat einen Verweis, auf die dazugehörige Szene und  einen eindeutigen Namen.
+    """
     ANZAHL = 0
 
     @classmethod
@@ -19,7 +15,7 @@ class SzenenDing:
         cls.ANZAHL += 1
         return str(cls.ANZAHL)
 
-    def __init__(self, prefix=None):
+    def __init__(self, prefix=None, elter=None):
         if prefix is None:
             prefix = str(self.__class__.__name__)
         self.name = prefix + SzenenDing.nummer()
@@ -30,20 +26,7 @@ class SzenenDing:
 
         :type: szene.Szene
         """
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return self.name
-
-    def __hash__(self):
-        return self.name.__hash__()
-
-
-class ElterDing(SzenenDing):
-    def __init__(self, prefix=None, elter=None):
-        super().__init__(prefix)
+        self.sichtbar = True
 
         if elter is None:
             from pyenguin import szene
@@ -56,28 +39,32 @@ class ElterDing(SzenenDing):
         :type: pyenguin.zeichnen.SzenenListe
         """
 
+        # Setzt den Elternverweis
         elter.dazu(self)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return self.name.__hash__()
 
 
 class Aktualisierbar(SzenenDing):
     def __init__(self, szene=None):
         super().__init__()
 
+        self.sichtbar = False
         self.ist_entfernt = False
-
-        if szene is None:
-            from pyenguin import szene
-            szene = szene.Szene.fenster_szene
-
-        self.szene = szene
-        self.szene.registriere_aktualiserbar(self)
 
     def __del__(self):
         if not self.ist_entfernt:
-            self.szene.entferne_aktualiserbar(self)
+            self.szene.raus(self)
 
     def entferne(self):
-        self.szene.entferne_aktualiserbar(self)
+        self.szene.raus(self)
         self.ist_entfernt = True
 
     def aktualisiere(self, dt):
@@ -105,23 +92,18 @@ class Warte(Aktualisierbar):
                 self.entferne()
 
 
-class SichtbaresSzenenDing(ElterDing, Sichtbar):
-    def __init__(self, elter=None):
-        Sichtbar.__init__(self)
-        ElterDing.__init__(self, elter=elter)
-
-
-class SzenenListe(ElterDing):
+class SzenenListe(SzenenDing):
     def __init__(self, elter=None):
         super().__init__(elter=elter)
 
-        self.liste = []
+        self.kind_elemente = []
         """
         :type: list[all.BewegbaresSzenenDing]
         """
+        self.anzahl = 0
 
     def dazu(self, was):
-        if not isinstance(was, ElterDing):
+        if not isinstance(was, SzenenDing):
             print("%s kann nicht hinzufügt werden!" % str(was))
             return
 
@@ -130,74 +112,33 @@ class SzenenListe(ElterDing):
             alte_liste.raus(was)
 
         was._elter = self
-        self.liste.append(was)
+        self.kind_elemente.append(was)
+        self.anzahl += 1
         was.szene = self.szene
 
     def raus(self, was):
-        if was in self.liste:
-            self.liste.remove(was)
+        if was in self.kind_elemente:
+            self.kind_elemente.remove(was)
+            self.anzahl -= 1
         else:
-            print("%s ist nicht in dieser Gruppe." % str(was))
+            print("%s ist nicht in %s." % (str(was), str(self)))
 
 
-class Bewegbar(Box):
-    def __init__(self, breite, hoehe):
-        Box.__init__(self, 0, 0, breite, hoehe)
-        self._welt_x_off = 0
-        self._welt_y_off = 0
-
-        self._x_bewegung = 0
-        self._y_bewegung = 0
-
-    @property
-    def bewegung_x(self):
-        return self._x_bewegung
-
-    @bewegung_x.setter
-    def bewegung_x(self, wert):
-        self._x_bewegung = wert
-
-    @property
-    def bewegung_y(self):
-        return self._y_bewegung
-
-    @bewegung_y.setter
-    def bewegung_y(self, wert):
-        self._y_bewegung = wert
-
-    @property
-    def welt_x(self):
-        return self._welt_x_off + self._x
-
-    @property
-    def welt_y(self):
-        return self._welt_y_off + self._y
-
-    def aktualisiere(self, dt):
-        self.aendere_position(dt * self._x_bewegung, dt * self._y_bewegung)
-
-    def anhalten(self):
-        self._x_bewegung = 0
-        self._y_bewegung = 0
-
-    def __str__(self):
-        return ": Pos: %d(%d), %d(%d), %dx%d" % (self._x, self._welt_x_off, self._y, self._welt_y_off, self.width, self.height)
-
-    def bewegt(self):
-        """
-        Aufgerufen, wenn sich die Position geändert hat.
-
-        :return:
-        :rtype:
-        """
-        pass
-
-
-class BewegbaresSzenenDing(Bewegbar, SichtbaresSzenenDing):
+class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def __init__(self, breite, hoehe, elter=None):
-        SichtbaresSzenenDing.__init__(self, elter=elter)
+        self.bei_maus_klick = None
+
+        SzenenDing.__init__(self, elter=elter)
         Bewegbar.__init__(self, breite, hoehe)
-        self.setze_position(self.szene.breite/2, self.szene.hoehe/2)
+        self.setze_position(self.szene.breite / 2, self.szene.hoehe / 2)
+
+    def setze_bei_maus_klick(self, funktion):
+        self.bei_maus_klick = funktion
+        self.szene.neues_maus_klick_ding(self)
+
+    def entferne_bei_maus_klick(self):
+        self.bei_maus_klick = lambda: None
+        self.szene.entferne_maus_klick_ding(self)
 
     @property
     def abstand_rechts(self):
@@ -267,7 +208,7 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
         x_off = self._welt_x_off + self._x
         y_off = self._welt_y_off + self._y
 
-        for element in self.liste:
+        for element in self.kind_elemente:
             element._welt_x_off = x_off
             element._welt_y_off = y_off
             element.aktualisiere(dt)
@@ -276,7 +217,7 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
         if not self.sichtbar:
             return
 
-        for element in self.liste:
+        for element in self.kind_elemente:
             if element.sichtbar:
                 element.zeichne(flaeche)
 

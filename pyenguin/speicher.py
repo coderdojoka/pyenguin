@@ -1,6 +1,6 @@
 import pygame
-from pyenguin.objekte import Flaeche
 
+import pyenguin
 from pyenguin.helfer import *
 from pyenguin.sound import Sound
 
@@ -15,7 +15,7 @@ class _Speicher:
 
     def lade_aus_paket(self, schluessel, pfade):
         ordner = kombiniere_pfad(ordner_pfad(), self.resourcen_pfad)
-        self.lade(schluessel, pfade, ordner)
+        return self.lade(schluessel, pfade, ordner)
 
     def lade(self, schluessel, pfade, start_ordner=""):
         """
@@ -30,13 +30,16 @@ class _Speicher:
         :rtype:
         """
         pus = pfade_und_schluessel(pfade, schluessel)
-
+        schluessel_liste = []
         for pfad, name in pus:
             pfad = kombiniere_pfad(start_ordner, pfad)
-            print("Lade Sound:", name, pfad)
+            schluessel_liste.append(name)
+            print("Lade:", name, pfad)
 
             s = self.neue_instanz(pfad)
             self.speicher[name] = s
+
+        return schluessel_liste
 
     def gib(self, schluessel):
         if schluessel not in self.speicher:
@@ -98,10 +101,10 @@ class _BildSpeicher(_Speicher):
         super().__init__("resourcen/bilder", ("png"))
 
     def neue_instanz(self, pfad):
-        return self._lade_pygbild_aus_datei(pfad, self.lade_mit_alpha)
+        return self.lade_pygbild_aus_datei(pfad, self.lade_mit_alpha)
 
     @staticmethod
-    def _lade_pygbild_aus_datei(pfad, alpha=True):
+    def lade_pygbild_aus_datei(pfad, alpha=True):
         """
         Lädt das Bild aus der beschrieben Datei.
         ACHTUNG: Kann das Bild nicht geladen werden, wird ein Fehler geworfen!
@@ -140,13 +143,13 @@ class _BildSpeicher(_Speicher):
         :param schluessel:
         :type schluessel:
         :return:
-        :rtype: Flaeche
+        :rtype: Bild
         """
         return super().gib(schluessel)
 
     def _gib_speicher_element(self, schluessel):
         pyg_flaeche = self.speicher[schluessel]
-        return Flaeche(pyg_flaeche.get_width(), pyg_flaeche.get_height(), pyg_flaeche)
+        return pyenguin.bild.Bild(pyg_flaeche, transparent=self.lade_mit_alpha)
 
 
 SoundSpeicher = _SoundSpeicher()

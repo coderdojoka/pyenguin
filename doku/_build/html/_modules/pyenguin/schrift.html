@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyenguin.schrift &mdash; pyenguin 0.1 Dokumentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyenguin 0.1 Dokumentation" href="../../index.html"/>
+        <link rel="up" title="pyenguin" href="../pyenguin.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyenguin
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pyenguin</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Modul-Quellcode</a> &raquo;</li>
+      
+          <li><a href="../pyenguin.html">pyenguin</a> &raquo;</li>
+      
+    <li>pyenguin.schrift</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Quellcode für pyenguin.schrift</h1><div class="highlight"><pre>
+<span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Mark Weinreuter&#39;</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+<span class="kn">import</span> <span class="nn">pygame.font</span>
+
+
+<div class="viewcode-block" id="Schrift"><a class="viewcode-back" href="../../index.html#pyenguin.Schrift">[Doku]</a><span class="k">class</span> <span class="nc">Schrift</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Eine Schrift, die zum Darstellen von Text verwendet werden kann.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">standard</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schrift_groesse</span><span class="p">,</span> <span class="n">schrift_art</span><span class="o">=</span><span class="s2">&quot;arial&quot;</span><span class="p">,</span> <span class="n">system_schrift</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param schrift_groesse: Größe der Schrift</span>
+<span class="sd">        :type schrift_groesse: int</span>
+<span class="sd">        :param schrift_art: Der Name der Schrift, z.B. Arial</span>
+<span class="sd">        :type schrift_art: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">schrift_art</span> <span class="o">=</span> <span class="n">schrift_art</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schrift_groesse</span> <span class="o">=</span> <span class="n">schrift_groesse</span>
+
+        <span class="k">if</span> <span class="n">system_schrift</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pyg_schrift</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">SysFont</span><span class="p">(</span><span class="n">schrift_art</span><span class="p">,</span> <span class="n">schrift_groesse</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pyg_schrift</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">Font</span><span class="p">(</span><span class="n">schrift_art</span><span class="p">,</span> <span class="n">schrift_groesse</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Schrift.berechne_groesse"><a class="viewcode-back" href="../../index.html#pyenguin.Schrift.berechne_groesse">[Doku]</a>    <span class="k">def</span> <span class="nf">berechne_groesse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gibt die Größe des Textes zurück.</span>
+
+<span class="sd">        :param text:</span>
+<span class="sd">        :type text:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pyg_schrift</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">hintergrund</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pyg_schrift</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">hintergrund</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">gib_vorhandene_schriftarten</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">fonts</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">get_fonts</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fonts</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">gib_standard_schrift</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">standard</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">cls</span><span class="o">.</span><span class="n">standard</span> <span class="o">=</span> <span class="n">Schrift</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">standard</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">gib_standard_schrift_name</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">get_default_font</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Weinreuter (Coderdojo Karlsruhe).
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

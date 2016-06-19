@@ -75,7 +75,7 @@ class Box(pygame.Rect):
 
     @property
     def hoehe(self):
-        return self.hoehe
+        return self.height
 
     @property
     def halbe_breite(self):
@@ -148,6 +148,52 @@ class Box(pygame.Rect):
 
     def dimension(self):
         return self.width, self.height
+
+
+class Bewegbar(Box):
+    def __init__(self, breite, hoehe):
+        Box.__init__(self, 0, 0, breite, hoehe)
+        self._welt_x_off = 0
+        self._welt_y_off = 0
+
+        self._x_bewegung = 0
+        self._y_bewegung = 0
+
+    @property
+    def bewegung_x(self):
+        return self._x_bewegung
+
+    @bewegung_x.setter
+    def bewegung_x(self, wert):
+        self._x_bewegung = wert
+
+    @property
+    def bewegung_y(self):
+        return self._y_bewegung
+
+    @bewegung_y.setter
+    def bewegung_y(self, wert):
+        self._y_bewegung = wert
+
+    @property
+    def welt_x(self):
+        return self._welt_x_off + self._x
+
+    @property
+    def welt_y(self):
+        return self._welt_y_off + self._y
+
+    def aktualisiere(self, dt):
+        self.aendere_position(dt * self._x_bewegung, dt * self._y_bewegung)
+
+    def anhalten(self):
+        self._x_bewegung = 0
+        self._y_bewegung = 0
+
+    def __str__(self):
+        return ": Pos: %d(%d), %d(%d), %dx%d" % (self._x, self._welt_x_off, self._y, self._welt_y_off, self.width, self.height)
+
+
 
 
 if __name__ == "__main__":

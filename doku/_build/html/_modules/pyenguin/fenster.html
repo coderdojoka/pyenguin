@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyenguin.fenster &mdash; pyenguin 0.1 Dokumentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyenguin 0.1 Dokumentation" href="../../index.html"/>
+        <link rel="up" title="pyenguin" href="../pyenguin.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyenguin
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">pyenguin</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Modul-Quellcode</a> &raquo;</li>
+      
+          <li><a href="../pyenguin.html">pyenguin</a> &raquo;</li>
+      
+    <li>pyenguin.fenster</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Quellcode für pyenguin.fenster</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">pygame</span>
+<span class="kn">from</span> <span class="nn">pygame.constants</span> <span class="kn">import</span> <span class="n">QUIT</span><span class="p">,</span> <span class="n">MOUSEMOTION</span><span class="p">,</span> <span class="n">MOUSEBUTTONUP</span><span class="p">,</span> <span class="n">MOUSEBUTTONDOWN</span><span class="p">,</span> <span class="n">KEYDOWN</span><span class="p">,</span> <span class="n">KEYUP</span><span class="p">,</span> <span class="n">K_ESCAPE</span>
+
+<span class="kn">from</span> <span class="nn">pyenguin.ereignis</span> <span class="kn">import</span> <span class="n">EreignisBearbeiter</span>
+<span class="kn">from</span> <span class="nn">pyenguin.gitter</span> <span class="kn">import</span> <span class="n">Gitter</span>
+<span class="kn">from</span> <span class="nn">pyenguin.szene</span> <span class="kn">import</span> <span class="n">Szene</span>
+<span class="kn">from</span> <span class="nn">pyenguin.tasten</span> <span class="kn">import</span> <span class="n">Taste</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Mark Weinreuter&#39;</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">pygame</span><span class="o">.</span><span class="n">mixer</span><span class="o">.</span><span class="n">pre_init</span><span class="p">(</span><span class="mi">44100</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>  <span class="c1"># setup mixer to avoid sound lag</span>
+<span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="n">pygame</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Das aktuelle Fenster</span>
+
+<span class="sd">:type: Fenster</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Fenster"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster">[Doku]</a><span class="k">class</span> <span class="nc">Fenster</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Die Hauptklasse, die das Fenster und den Ablauf startet.</span>
+<span class="sd">    Es muss init() und starten() aufgerufen werden.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aktuelles_fenster</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="n">zeit_unterschied_ms</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Der Zeitunterschied zwischen den aktuellen Frames.</span>
+
+<span class="sd">    :type: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">relativer_unterschied</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Der relative Zeitunterschied zwischen den aktuellen Frames.</span>
+
+<span class="sd">    :type: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">breite</span><span class="o">=</span><span class="mi">640</span><span class="p">,</span> <span class="n">hoehe</span><span class="o">=</span><span class="mi">480</span><span class="p">,</span> <span class="n">titel</span><span class="o">=</span><span class="s2">&quot;pyenguin Zeichenbibliothek&quot;</span><span class="p">,</span>
+                 <span class="n">aktualisierungs_funktion</span><span class="o">=</span><span class="k">lambda</span> <span class="n">zeit</span><span class="p">:</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialisiert das Fenster.</span>
+
+<span class="sd">        :param breite: die Fensterbreite</span>
+<span class="sd">        :type breite: int</span>
+<span class="sd">        :param hoehe: die Fensterhöhe</span>
+<span class="sd">        :type hoehe: int</span>
+<span class="sd">        :param titel: Der Fenstertitel</span>
+<span class="sd">        :type titel: str</span>
+<span class="sd">        :param aktualisierungs_funktion: die Aktualisierungsfunktion,</span>
+<span class="sd">         die bei jedem Neuzeichnen aufgerufen wird (fps mal pro sekunde)</span>
+<span class="sd">        :type aktualisierungs_funktion: (float) -&gt; None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">breite</span> <span class="o">=</span> <span class="n">breite</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Die Breite des Spiels (Fensters).</span>
+<span class="sd">    </span>
+<span class="sd">        :type: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hoehe</span> <span class="o">=</span> <span class="n">hoehe</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Die Höhe des Spiels (Fensters).</span>
+<span class="sd">    </span>
+<span class="sd">        :type: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Die Anzahl der Aktualisierungen pro Sekunde (&quot;Frames per second).</span>
+<span class="sd">    </span>
+<span class="sd">        :type: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ist_aktiv</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solange dieses Flag auf True gesetzt ist, läuft die Spiel.</span>
+
+<span class="sd">        :type: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clock</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">Clock</span><span class="p">()</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Taktgeber für das Spiel um die Fps einzustellen.</span>
+<span class="sd">    </span>
+<span class="sd">        :type: pygame.time.Clock</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aktualisiere</span> <span class="o">=</span> <span class="n">EreignisBearbeiter</span><span class="p">()</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Die Funktion, die aufgerufen wird, wenn das Spiel aktualisiert wird (fps mal).</span>
+<span class="sd">    </span>
+<span class="sd">        :type: pyenguin.EreignisBearbeiter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wird_beendet</span> <span class="o">=</span> <span class="n">EreignisBearbeiter</span><span class="p">()</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Funktion die aufgerufen wird, wenn das Spiel beendet wird.</span>
+<span class="sd">    </span>
+<span class="sd">        :type: pyenguin.EreignisBearbeiter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># die Aktualisierungsfunktion schleife</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aktualisiere</span><span class="o">.</span><span class="n">registriere</span><span class="p">(</span><span class="n">aktualisierungs_funktion</span><span class="p">)</span>
+
+        <span class="c1"># Dimension des Fensters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">breite</span> <span class="o">=</span> <span class="n">breite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hoehe</span> <span class="o">=</span> <span class="n">hoehe</span>
+
+        <span class="c1"># Fenstertitel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setze_fenster_titel</span><span class="p">(</span><span class="n">titel</span><span class="p">)</span>
+
+        <span class="n">Szene</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">Szene</span><span class="p">(</span><span class="n">breite</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">((</span><span class="n">breite</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">)),</span>
+                         <span class="n">farbe</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)))</span>
+
+        <span class="c1"># setze ESC handler um das Fenster zu schließen</span>
+        <span class="n">Szene</span><span class="o">.</span><span class="n">fenster_szene</span><span class="o">.</span><span class="n">registriere_taste_unten</span><span class="p">(</span><span class="n">K_ESCAPE</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">taste</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beenden</span><span class="p">())</span>
+
+        <span class="k">global</span> <span class="n">aktuelles_fenster</span>
+        <span class="n">aktuelles_fenster</span> <span class="o">=</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="Fenster.beenden"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster.beenden">[Doku]</a>    <span class="k">def</span> <span class="nf">beenden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Beendet und schließt das Fenster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wird_beendet</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ist_aktiv</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="Fenster.starten"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster.starten">[Doku]</a>    <span class="k">def</span> <span class="nf">starten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Startet das Fenster. Hinweis, diese Funktion blockiert und kehrt nie zurück!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># erster tick für zeit_unterschied_ms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ist_aktiv</span><span class="p">:</span>  <span class="c1"># self schleife</span>
+
+            <span class="c1"># wir gehen alle events durch</span>
+            <span class="k">for</span> <span class="n">ereignis</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+
+                <span class="c1"># Fenster schließen</span>
+                <span class="k">if</span> <span class="n">ereignis</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">QUIT</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">beenden</span><span class="p">()</span>
+
+                <span class="c1"># Maus bewegt</span>
+                <span class="k">elif</span> <span class="n">ereignis</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MOUSEMOTION</span><span class="p">:</span>
+                    <span class="n">Szene</span><span class="o">.</span><span class="n">verarbeite_maus_bewegt</span><span class="p">(</span><span class="n">ereignis</span><span class="p">)</span>
+
+                <span class="c1"># Maustaste gedrückt</span>
+                <span class="k">elif</span> <span class="n">ereignis</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MOUSEBUTTONDOWN</span><span class="p">:</span>
+                    <span class="n">Szene</span><span class="o">.</span><span class="n">verarbeite_maus_geklickt</span><span class="p">(</span><span class="n">ereignis</span><span class="p">)</span>
+
+                <span class="c1"># Maustaste losgelassen</span>
+                <span class="k">elif</span> <span class="n">ereignis</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">MOUSEBUTTONUP</span><span class="p">:</span>
+                    <span class="n">Szene</span><span class="o">.</span><span class="n">verarbeite_maus_losgelassen</span><span class="p">(</span><span class="n">ereignis</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">ereignis</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">KEYDOWN</span><span class="p">:</span>
+                    <span class="n">Szene</span><span class="o">.</span><span class="n">verarbeite_taste_unten</span><span class="p">(</span><span class="n">ereignis</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">ereignis</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">KEYUP</span><span class="p">:</span>
+                    <span class="n">Szene</span><span class="o">.</span><span class="n">verarbeite_taste_oben</span><span class="p">(</span><span class="n">ereignis</span><span class="p">)</span>
+
+            <span class="c1"># Alles zeichnen und für Aktualisierung sorgen</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_aktualisiere_und_zeichne</span><span class="p">()</span>
+
+            <span class="c1"># muss aufgerufen werden um Änderungen anzuzeigen</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>  <span class="c1"># update besser?</span>
+
+        <span class="c1"># Die Schleife ist zu Ende, wir beenden das Programm :)</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">_aktualisiere_und_zeichne</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># lässt das self mit ca. dieser fps laufen und fragt vergangene Zeit ab</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeit_unterschied_ms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">)</span>
+
+        <span class="c1"># relativer Zeitunterschied</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relativer_unterschied</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeit_unterschied_ms</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span>
+
+        <span class="c1"># Alle registrierten Aktualisierungsfunktionen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aktualisiere</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relativer_unterschied</span><span class="p">)</span>
+
+        <span class="c1"># Alle Instanzen, die von Aktualisierbar erben</span>
+        <span class="c1"># Aktualisierbar.aktualisiere_alle(self.relativer_unterschied, self.zeit_unterschied_ms)</span>
+
+        <span class="c1"># zeichne alles!!!</span>
+        <span class="n">Szene</span><span class="o">.</span><span class="n">zeichne_szenen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zeit_unterschied_ms</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Fenster.setze_fenster_titel"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster.setze_fenster_titel">[Doku]</a>    <span class="k">def</span> <span class="nf">setze_fenster_titel</span><span class="p">(</span><span class="n">titel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setzt den Titel für das Fenster.</span>
+
+<span class="sd">        :param titel: Der Fenstertitel</span>
+<span class="sd">        :type titel: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="n">titel</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fenster.registriere_wird_beendet"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster.registriere_wird_beendet">[Doku]</a>    <span class="k">def</span> <span class="nf">registriere_wird_beendet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Registriert eine Funktion, die aufgerufen wird, wenn das self beendet wird.</span>
+
+<span class="sd">        :param funktion: Die Funktion</span>
+<span class="sd">        :type funktion: (object)-&gt;None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wird_beendet</span><span class="o">.</span><span class="n">registriere</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fenster.registriere_aktualisierung"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster.registriere_aktualisierung">[Doku]</a>    <span class="k">def</span> <span class="nf">registriere_aktualisierung</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setzt die Funktion, die einmal pro self Update-Durchlauf aufgerufen wird, in der self-Objekte</span>
+<span class="sd">        aktualisiert werden können.</span>
+
+<span class="sd">        :param funktion: die Aktualisierungsfunktion</span>
+<span class="sd">        :type funktion: (float) -&gt; None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aktualisiere</span><span class="o">.</span><span class="n">registriere</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fenster.entferne_aktualisierung"><a class="viewcode-back" href="../../index.html#pyenguin.Fenster.entferne_aktualisierung">[Doku]</a>    <span class="k">def</span> <span class="nf">entferne_aktualisierung</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Entfernt die Aktualisierugsfunktion.</span>
+<span class="sd">        :param funktion: Die Funktion, die entfernt werden soll</span>
+<span class="sd">        :type funktion: (object) -&gt; None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aktualisiere</span><span class="o">.</span><span class="n">entferne</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">zeichne_gitter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groesse</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">zahlen</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">gitter</span> <span class="o">=</span> <span class="n">Gitter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">breite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hoehe</span><span class="p">,</span> <span class="n">groesse</span><span class="o">=</span><span class="n">groesse</span><span class="p">,</span> <span class="n">zahlen</span><span class="o">=</span><span class="n">zahlen</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Weinreuter (Coderdojo Karlsruhe).
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

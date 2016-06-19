@@ -4,7 +4,7 @@ __author__ = 'Mark Weinreuter'
 
 aktuelles_fenster = Fenster()
 
-f = Flaeche(40, 40, transparent=True)
+f = Bemalbar(40, 40, transparent=True)
 f.kreis(0, 0, 20, (255, 0, 0))
 r = Rechteck(100, 100, 50, 50, (0, 24, 55))
 k = Kreis(30, 40, 20, (0, 255, 0))

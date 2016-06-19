@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Das Fenster &mdash; pyenguin 0.1 Dokumentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyenguin 0.1 Dokumentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyenguin
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">pyenguin</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Das Fenster</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/fenster.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="das-fenster">
+<span id="fenster"></span><h1>Das Fenster<a class="headerlink" href="#das-fenster" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Der Haupteinstiegspunkt für jede Anwendung. Hierüber wird ein Fenster
+erzeugt und angezeigt.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>fenster = Fenster(400, 600, &quot;Hallo Fenster)
+# ... Elemente und Ereignisse erstellen/registrieren
+
+fenster.starten()
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-pyenguin.fenster"></span><dl class="class">
+<dt id="pyenguin.fenster.Fenster">
+<em class="property">class </em><code class="descclassname">pyenguin.fenster.</code><code class="descname">Fenster</code><span class="sig-paren">(</span><em>breite=640</em>, <em>hoehe=480</em>, <em>titel='pyenguin Zeichenbibliothek'</em>, <em>aktualisierungs_funktion=&lt;function Fenster.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Die Klasse, um ein Fenster anzuzeigen und die Schleife zu starten.
+Nachdem einen Instanz erstellt wurde, muss <a class="reference internal" href="#pyenguin.fenster.Fenster.starten" title="pyenguin.fenster.Fenster.starten"><code class="xref py py-meth docutils literal"><span class="pre">starten()</span></code></a> aufgerufen werden,
+um das Fenser zu starten.:</p>
+<blockquote>
+<div><p>fenster = Fenster(400, 600, &#8220;Hallo Fenster)
+# ... Elemente und Ereignisse erstellen/registrieren</p>
+<p>fenster.starten()</p>
+</div></blockquote>
+<p>Initialisiert das Fenster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><ul class="first last simple">
+<li><strong>breite</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; die Fensterbreite</li>
+<li><strong>hoehe</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; die Fensterhöhe</li>
+<li><strong>titel</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Der Fenstertitel</li>
+<li><strong>aktualisierungs_funktion</strong> (<em>(float) -&gt; None</em>) &#8211; die Aktualisierungsfunktion,
+die bei jedem Neuzeichnen aufgerufen wird (fps mal pro sekunde)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pyenguin.fenster.Fenster.aktuelles_fenster">
+<code class="descname">aktuelles_fenster</code><em class="property"> = None</em><a class="headerlink" href="#pyenguin.fenster.Fenster.aktuelles_fenster" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Das aktuelle Fenster</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">pyenguin.fenster.Fenster</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyenguin.fenster.Fenster.beenden">
+<code class="descname">beenden</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.beenden" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Beendet und schließt das Fenster.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyenguin.fenster.Fenster.breite">
+<code class="descname">breite</code><em class="property"> = None</em><a class="headerlink" href="#pyenguin.fenster.Fenster.breite" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Die Breite des Spiels (Fensters).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyenguin.fenster.Fenster.entferne_aktualisierung">
+<code class="descname">entferne_aktualisierung</code><span class="sig-paren">(</span><em>funktion</em><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.entferne_aktualisierung" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Entfernt die Aktualisierugsfunktion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><strong>funktion</strong> (<em>(object) -&gt; None</em>) &#8211; Die Funktion, die entfernt werden soll.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyenguin.fenster.Fenster.fps">
+<code class="descname">fps</code><em class="property"> = None</em><a class="headerlink" href="#pyenguin.fenster.Fenster.fps" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Die Anzahl der Aktualisierungen pro Sekunde (&#8220;Frames per second).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyenguin.fenster.Fenster.hoehe">
+<code class="descname">hoehe</code><em class="property"> = None</em><a class="headerlink" href="#pyenguin.fenster.Fenster.hoehe" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Die Höhe des Spiels (Fensters).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyenguin.fenster.Fenster.registriere_aktualisierung">
+<code class="descname">registriere_aktualisierung</code><span class="sig-paren">(</span><em>funktion</em><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.registriere_aktualisierung" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Setzt die Funktion, die einmal pro self Update-Durchlauf aufgerufen wird, in der self-Objekte
+aktualisiert werden können.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><strong>funktion</strong> (<em>(float) -&gt; None</em>) &#8211; die Aktualisierungsfunktion</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyenguin.fenster.Fenster.registriere_wird_beendet">
+<code class="descname">registriere_wird_beendet</code><span class="sig-paren">(</span><em>funktion</em><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.registriere_wird_beendet" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Registriert eine Funktion, die aufgerufen wird, wenn das self beendet wird.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><strong>funktion</strong> (<em>(object)-&gt;None</em>) &#8211; Die Funktion</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pyenguin.fenster.Fenster.relativer_unterschied">
+<code class="descname">relativer_unterschied</code><em class="property"> = 0</em><a class="headerlink" href="#pyenguin.fenster.Fenster.relativer_unterschied" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Der relative Zeitunterschied zwischen den aktuellen Frames.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="pyenguin.fenster.Fenster.setze_fenster_titel">
+<em class="property">static </em><code class="descname">setze_fenster_titel</code><span class="sig-paren">(</span><em>titel</em><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.setze_fenster_titel" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Setzt den Titel für das Fenster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameter:</th><td class="field-body"><strong>titel</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Der Fenstertitel</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyenguin.fenster.Fenster.starten">
+<code class="descname">starten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.starten" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Startet das Fenster. Hinweis, diese Funktion blockiert und kehrt nie zurück!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyenguin.fenster.Fenster.zeichne_gitter">
+<code class="descname">zeichne_gitter</code><span class="sig-paren">(</span><em>groesse=50</em>, <em>zahlen=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyenguin.fenster.Fenster.zeichne_gitter" title="Link zu dieser Definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pyenguin.fenster.Fenster.zeit_unterschied_ms">
+<code class="descname">zeit_unterschied_ms</code><em class="property"> = 0</em><a class="headerlink" href="#pyenguin.fenster.Fenster.zeit_unterschied_ms" title="Link zu dieser Definition">¶</a></dt>
+<dd><p>Der Zeitunterschied zwischen den aktuellen Frames.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link zu dieser Überschrift">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span>Stichwortverzeichnis</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span>Modulindex</span></a></li>
+<li><a class="reference internal" href="search.html"><span>Suche</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Weinreuter (Coderdojo Karlsruhe).
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

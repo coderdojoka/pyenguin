@@ -1,70 +1,51 @@
-from pyenguin.dinge import BewegbaresSzenenDing
-from pyenguin.speicher import BildSpeicher
+from pyenguin.dinge import Gruppe, Bewegbar
+from pyenguin.objekte import BewegbaresSzenenDing
 
 __author__ = 'Mark Weinreuter'
 
 
-class Figur(BewegbaresSzenenDing):
-    def __init__(self, schluessel):
-        self._pyg_bilder = []
-        self._pyg_bilder_namen = {}
-        self._anzahl_bilder = 0
-        self._aktuelles_pyg_bild = None
+class Figur(Gruppe):
+    def __init__(self, objekte, elter=None):
+        self._aktuelles_objekt = None
         self._aktueller_index = 0
-        self.wechsle_bilder = False
-        self.wechsel_dauer = 1000
-        self._vergangene_zeit_ms = -1
 
-        super().__init__(*self.neue_bilder(schluessel))
+        Gruppe.__init__(self, elter=elter)
+        self.neue_kostueme(objekte)
 
     def aktualisiere(self, dt):
-        super().aktualisiere(dt)
-
-        if self.wechsle_bilder:
-
-            self._vergangene_zeit_ms += dt
-
-            # Ist die Zeit um?
-            if self._vergangene_zeit_ms >= self.wechsel_dauer:
-                self.naechstes_bild()
-                self._vergangene_zeit_ms = 0
+        Bewegbar.aktualisiere(self, dt)
+        self._aktuelles_objekt.aktualisiere(dt)
 
     def zeichne(self, flaeche):
-        flaeche._pyg_flaeche.blit(self._aktuelles_pyg_bild, self)
+        flaeche.pyg_flaeche.blit(
+            self._aktuelles_objekt.pyg_flaeche,
+            (self._welt_x_off + self.links - self._aktuelles_objekt.halbe_breite,
+             self._welt_y_off + self.oben - self._aktuelles_objekt.halbe_hoehe),
+            self._aktuelles_objekt.ausschnitt)
 
-    def neue_bilder(self, schluessel):
-        if isinstance(schluessel, str):
-            schluessel = [schluessel]
+    def neue_kostueme(self, objekte):
+        if isinstance(objekte, BewegbaresSzenenDing):
+            objekte = [objekte]
 
-        for schl in schluessel:
-            if not BildSpeicher.hat(schl):
-                print("Das Bild: %s ist NICHT im Bildspeicher vorhanden!" % schl)
-                continue
+        for o in objekte:
+            if not isinstance(o, BewegbaresSzenenDing):
+                raise AttributeError("Kann %s (%s) nicht hinzufügen! Es muss zeichenbar sein." % (str(o), str(type(o))))
 
-            self._pyg_bilder.append(BildSpeicher.gib_pygame_bild(schl))
-            self._pyg_bilder_namen[schl] = self._anzahl_bilder
-            self._anzahl_bilder += 1
+            self.dazu(o)
 
-        if len(self._pyg_bilder) == 0:
-            raise ValueError("Es wurden keine Bilder geladen. Dies ist ein Fehler!")
+        self._aktuelles_objekt = self.kind_elemente[self._aktueller_index]
+        return self._aktuelles_objekt.breite, self._aktuelles_objekt.hoehe
 
-        self._aktuelles_pyg_bild = self._pyg_bilder[self._aktueller_index]
-        return self._aktuelles_pyg_bild.get_width(), self._aktuelles_pyg_bild.get_height()
-
-    def naechstes_bild(self):
+    def naechstes(self):
         self.zeige_nummer(self._aktueller_index + 1)
 
-    def vorheriges_bild(self):
+    def vorheriges(self):
         self.zeige_nummer(self._aktueller_index - 1)
 
     def zeige_nummer(self, index):
-        self._aktueller_index = index % self._anzahl_bilder
-        self._aktuelles_pyg_bild = self._pyg_bilder[self._aktueller_index]
+        self._aktueller_index = index % self.anzahl
+        self._aktuelles_objekt = self.kind_elemente[self._aktueller_index]
+        self.setze_dimension(self._aktuelles_objekt.breite, self._aktuelles_objekt.hoehe)
 
-    def zeige_name(self, name):
-        if name not in self._pyg_bilder_namen:
-            print("Es ist kein Bild mit dem Namen '%s' geladen." % name)
-            return
-
-        self._aktueller_index = self._pyg_bilder_namen[name]
-        self._aktuelles_pyg_bild = self._pyg_bilder[self._aktueller_index]
+    def __hash__(self):
+        return self.name.__hash__()

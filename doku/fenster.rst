@@ -1,0 +1,35 @@
+.. pyenguin documentation master file, created by
+   sphinx-quickstart on Sun May 22 17:46:31 2016.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+.. _fenster:
+
+Das Fenster
+===========
+Der Haupteinstiegspunkt für jede Anwendung. Hierüber wird ein Fenster
+erzeugt und angezeigt.
+::
+   fenster = Fenster(400, 600, "Hallo Fenster")
+   # ... Elemente und Ereignisse erstellen/registrieren
+
+   fenster.starten()
+
+
+
+.. toctree::
+   :maxdepth: 2
+
+.. automodule:: pyenguin.fenster
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

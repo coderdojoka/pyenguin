@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyenguin &mdash; pyenguin 0.1 Dokumentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pyenguin 0.1 Dokumentation" href="../index.html"/>
+        <link rel="up" title="Modul-Quellcode" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pyenguin
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="simple">
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">pyenguin</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Modul-Quellcode</a> &raquo;</li>
+      
+    <li>pyenguin</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Quellcode für pyenguin</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyenguin.cursor</span> <span class="kn">import</span> <span class="n">MausZeiger</span>
+<span class="kn">from</span> <span class="nn">pyenguin.dinge</span> <span class="kn">import</span> <span class="n">Gruppe</span><span class="p">,</span> <span class="n">Warte</span><span class="p">,</span> <span class="n">Aktualisierbar</span>
+<span class="kn">from</span> <span class="nn">pyenguin.ereignis</span> <span class="kn">import</span> <span class="n">EreignisBearbeiter</span>
+<span class="kn">from</span> <span class="nn">pyenguin.farben</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyenguin.fenster</span> <span class="kn">import</span> <span class="n">Fenster</span>
+<span class="kn">from</span> <span class="nn">pyenguin.figur</span> <span class="kn">import</span> <span class="n">Figur</span>
+<span class="kn">from</span> <span class="nn">pyenguin.objekte</span> <span class="kn">import</span> <span class="n">Flaeche</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">pyenguin.schrift</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyenguin.sound</span> <span class="kn">import</span> <span class="n">HintergrundMusik</span>
+<span class="kn">from</span> <span class="nn">pyenguin.speicher</span> <span class="kn">import</span> <span class="n">BildSpeicher</span><span class="p">,</span> <span class="n">SoundSpeicher</span>
+<span class="kn">from</span> <span class="nn">pyenguin.szene</span> <span class="kn">import</span> <span class="n">Szene</span>
+<span class="kn">from</span> <span class="nn">pyenguin.tasten</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Mark Weinreuter&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">Rechteck</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">breite</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Flaeche</span><span class="p">(</span><span class="n">breite</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">rechteck</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">breite</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="o">=</span><span class="n">dicke</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">links</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">oben</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">return</span> <span class="n">f</span>
+
+
+<span class="k">def</span> <span class="nf">Kreis</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Flaeche</span><span class="p">(</span><span class="n">radius</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">radius</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">kreis</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">setze_position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f</span>
+
+
+<span class="k">def</span> <span class="nf">Oval</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius1</span><span class="p">,</span> <span class="n">radius2</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Flaeche</span><span class="p">(</span><span class="n">radius1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">radius2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">oval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">radius1</span><span class="p">,</span> <span class="n">radius2</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">setze_position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f</span>
+
+
+<span class="k">def</span> <span class="nf">Vieleck</span><span class="p">(</span><span class="n">punkte</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">punkte</span><span class="p">))</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">punkte</span><span class="p">))</span>
+    <span class="n">minx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">miny</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+    <span class="n">punkte</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span> <span class="o">-</span> <span class="n">minx</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">miny</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">punkte</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Flaeche</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">-</span> <span class="n">minx</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span> <span class="o">-</span> <span class="n">miny</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">vieleck</span><span class="p">(</span><span class="n">punkte</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">links</span> <span class="o">=</span> <span class="n">minx</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">oben</span> <span class="o">=</span> <span class="n">miny</span>
+
+    <span class="k">return</span> <span class="n">f</span>
+
+
+<span class="k">def</span> <span class="nf">Linie</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">minx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">qx</span><span class="p">)</span>
+    <span class="n">miny</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">qy</span><span class="p">)</span>
+    <span class="n">maxx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">qx</span><span class="p">)</span> <span class="o">-</span> <span class="n">minx</span>
+    <span class="n">maxy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">qy</span><span class="p">)</span> <span class="o">-</span> <span class="n">miny</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">Flaeche</span><span class="p">(</span><span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">linie</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span><span class="p">,</span> <span class="n">farbe</span><span class="p">,</span> <span class="n">dicke</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">setze_position</span><span class="p">(</span><span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span>
+
+
+<div class="viewcode-block" id="registriere_alle_tasten"><a class="viewcode-back" href="../index.html#pyenguin.registriere_alle_tasten">[Doku]</a><span class="k">def</span> <span class="nf">registriere_alle_tasten</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Die Funktion wird aufgerufen, wenn eine beliebige Taste gedrückt wird</span>
+
+<span class="sd">    :param funktion:</span>
+<span class="sd">    :type funktion: (bool, str, int) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_alle_tasten</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="entferne_alle_tasten"><a class="viewcode-back" href="../index.html#pyenguin.entferne_alle_tasten">[Doku]</a><span class="k">def</span> <span class="nf">entferne_alle_tasten</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entfernt die Funktion wird aufgerufen, wenn eine beliebige Taste gedrückt wird</span>
+
+<span class="sd">    :param funktion:</span>
+<span class="sd">    :type funktion: (bool, Str, int) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">entferne_alle_tasten</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="registriere_taste_oben"><a class="viewcode-back" href="../index.html#pyenguin.registriere_taste_oben">[Doku]</a><span class="k">def</span> <span class="nf">registriere_taste_oben</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registriert eine Funktion, die ausgeführt wird, wenn die angegebene Taste runter gedrückt und losgelassen wird.</span>
+
+<span class="sd">    :param taste: die Taste z.B. die a-Taste ist 97. Die wichtigsten Tasten sind vordefiniert, so entspricht T_a der &#39;a&#39;-Taste</span>
+<span class="sd">    :type taste: int</span>
+<span class="sd">    :param funktion: Die Funktion die aufgerufen wird. Sie muss 2 Parameter akzeptieren, der</span>
+<span class="sd">    Erste gibt an, ob die Taste gedrückt oder losgelassen ist und der Zweite ist das Event Objekt</span>
+<span class="sd">    :type funktion: (bool, pyenguin.Taste) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_taste_oben</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="entferne_taste_oben"><a class="viewcode-back" href="../index.html#pyenguin.entferne_taste_oben">[Doku]</a><span class="k">def</span> <span class="nf">entferne_taste_oben</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entfernt eine Funktion, die ausgeführt wird, wenn die angegebene Taste runter gedrückt und losgelassen wird.</span>
+
+<span class="sd">    :param taste: die Taste</span>
+<span class="sd">    :type taste: int</span>
+<span class="sd">    :param funktion: Die Funktion die aufgerufen wird.</span>
+<span class="sd">    :type funktion: (Taste) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">entferne_taste_oben</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="registriere_taste_unten"><a class="viewcode-back" href="../index.html#pyenguin.registriere_taste_unten">[Doku]</a><span class="k">def</span> <span class="nf">registriere_taste_unten</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registriert eine Funktion, die ausgeführt wird, wenn die angegebene Taste runter gedrückt wird.</span>
+
+<span class="sd">    :param taste: die Taste z.B. die a-Taste ist 97. Die wichtigsten Tasten sind vordefiniert, so entspricht T_a der &#39;a&#39;-Taste</span>
+<span class="sd">    :type taste: int</span>
+<span class="sd">    :param funktion: Die Funktion die aufgerufen wird. Sie muss 1 Parameter akzeptieren</span>
+<span class="sd">    :type funktion: (Zeichen) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_taste_unten</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="entferne_taste_unten"><a class="viewcode-back" href="../index.html#pyenguin.entferne_taste_unten">[Doku]</a><span class="k">def</span> <span class="nf">entferne_taste_unten</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entfernt eine Funktion, die ausgeführt wird, wenn die angegebene Taste runter gedrückt wird.</span>
+
+<span class="sd">    :param taste: die Taste</span>
+<span class="sd">    :type taste: int</span>
+<span class="sd">    :param funktion: Die Funktion die aufgerufen wird.</span>
+<span class="sd">    :type funktion: (Taste) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">entferne_taste_unten</span><span class="p">(</span><span class="n">taste</span><span class="p">,</span> <span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="registriere_maus_bewegt"><a class="viewcode-back" href="../index.html#pyenguin.registriere_maus_bewegt">[Doku]</a><span class="k">def</span> <span class="nf">registriere_maus_bewegt</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registriert eine Funktion, die ausgeführt wird, wenn eine Maus-Taste gedrückt wird.</span>
+<span class="sd">    Wenn die Funktion aufgerufen wird, wird ihr ein Objekt übergeben, das so aufgebaut ist:</span>
+
+<span class="sd">        button: 1-3 # welche Taste: 1 = Links, ...</span>
+<span class="sd">        pos: (x,y) # Tupel mit der Position</span>
+
+<span class="sd">    :param funktion: Die Funktion die aufgerufen werden soll, wenn eine Taste gedrückt wurde</span>
+<span class="sd">    :type funktion: (object) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_maus_bewegt</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="entferne_maus_bewegt"><a class="viewcode-back" href="../index.html#pyenguin.entferne_maus_bewegt">[Doku]</a><span class="k">def</span> <span class="nf">entferne_maus_bewegt</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enfternt eine Funktion, die ausgeführt wird, wenn eine Maus-Taste gedrückt wird.</span>
+<span class="sd">    Wenn die Funktion aufgerufen wird, wird ihr ein Objekt übergeben, das so aufgebaut ist:</span>
+
+<span class="sd">        button: 1-3 # welche Taste: 1 = Links, ...</span>
+<span class="sd">        pos: (x,y) # Tupel mit der Position</span>
+
+<span class="sd">    :param funktion: Die Funktion die aufgerufen werden soll, wenn eine Taste gedrückt wurde</span>
+<span class="sd">    :type funktion: (object) -&gt; None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_maus_bewegt</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="registriere_maus_losgelassen"><a class="viewcode-back" href="../index.html#pyenguin.registriere_maus_losgelassen">[Doku]</a><span class="k">def</span> <span class="nf">registriere_maus_losgelassen</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registriert eine Funktion, die aufgerufen wird, wenn eine Maustaste losgelassen wird.</span>
+
+<span class="sd">    :param funktion: Die Funktion</span>
+<span class="sd">    :type funktion: (object)-&gt;None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_maus_losgelassen</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">entferene_maus_losgelassen</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entfernt eine Funktion, die aufgerufen wird, wenn eine Maustaste losgelassen wird.</span>
+
+<span class="sd">    :param funktion: Die Funktion</span>
+<span class="sd">    :type funktion: (object)-&gt;None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">entferene_maus_losgelassen</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="registriere_maus_geklickt"><a class="viewcode-back" href="../index.html#pyenguin.registriere_maus_geklickt">[Doku]</a><span class="k">def</span> <span class="nf">registriere_maus_geklickt</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registriert eine Funktion, die aufgerufen wird, wenn eine Maustaste gedrückt wird.</span>
+
+<span class="sd">    :param funktion:</span>
+<span class="sd">    :type funktion: (object)-&gt;None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">registriere_maus_geklickt</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="entferne_maus_geklickt"><a class="viewcode-back" href="../index.html#pyenguin.entferne_maus_geklickt">[Doku]</a><span class="k">def</span> <span class="nf">entferne_maus_geklickt</span><span class="p">(</span><span class="n">funktion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entfernt eine Funktion, die aufgerufen wird, wenn eine Maustaste gedrückt wird.</span>
+
+<span class="sd">    :param funktion:</span>
+<span class="sd">    :type funktion: (object)-&gt;None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Szene</span><span class="o">.</span><span class="n">aktive_szene</span><span class="o">.</span><span class="n">entferne_maus_geklickt</span><span class="p">(</span><span class="n">funktion</span><span class="p">)</span>
+
+</div>
+<span class="n">__HANDLER_NAMEN</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;registriere_&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;entferne_&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;BildSpeicher&quot;</span><span class="p">,</span> <span class="s2">&quot;SoundSpeicher&quot;</span><span class="p">,</span> <span class="s2">&quot;Figur&quot;</span><span class="p">,</span> <span class="s2">&quot;Szene&quot;</span><span class="p">,</span> <span class="s2">&quot;Fenster&quot;</span><span class="p">,</span> <span class="s2">&quot;Flaeche&quot;</span><span class="p">,</span> <span class="s2">&quot;Gruppe&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EreignisBearbeiter&quot;</span><span class="p">,</span> <span class="s2">&quot;Schrift&quot;</span><span class="p">,</span> <span class="s2">&quot;Text&quot;</span><span class="p">,</span> <span class="s2">&quot;Rechteck&quot;</span><span class="p">,</span> <span class="s2">&quot;Kreis&quot;</span><span class="p">,</span> <span class="s2">&quot;Oval&quot;</span><span class="p">,</span> <span class="s2">&quot;Vieleck&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MausZeiger&quot;</span><span class="p">,</span> <span class="s2">&quot;HintergrundMusik&quot;</span><span class="p">,</span> <span class="s2">&quot;Warte&quot;</span><span class="p">,</span> <span class="s2">&quot;Aktualisierbar&quot;</span><span class="p">]</span>
+
+<span class="n">__all__</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">FARBEN_NAMEN</span><span class="p">)</span>
+<span class="n">__all__</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">TASTEN_NAMEN</span><span class="p">)</span>
+<span class="n">__all__</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">__HANDLER_NAMEN</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Weinreuter (Coderdojo Karlsruhe).
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

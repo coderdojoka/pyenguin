@@ -1,6 +1,6 @@
-from pyenguin._flaeche import _Flaeche
-from pyenguin.dinge import SzenenListe
+from pyenguin.dinge import SzenenListe, BewegbaresSzenenDing
 from pyenguin.ereignis import EreignisBearbeiter
+from pyenguin.objekte import Bemalbar
 from pyenguin.tasten import Taste
 
 __author__ = 'Mark Weinreuter'
@@ -21,19 +21,29 @@ top = TopLevel()
 
 
 class Szene(SzenenListe):
+    """
+    Eine Szene stellt einen Ausschnitt des Fensters da.
+    Ein normales Program hat nur eine Szene, die das ganze Fenster füllt.
+    Szenen sind Container für Flächen und Gruppen, die innerhalb einer Szene gezeichnet werden.
+    Die Position von Kind-Objekte einer Szene ist relativ zur Szenen-position.
+
+    Maus und Tastaturereignisse werden immer an die aktive Szene geleitet!
+    """
+
     aktive_szene = None
     """
-   Die aktuell aktive Szene.
-
-   :type: Szene
-   """
-
-    fenster_szene = None
-    """
-    Die ZeichenFlaeche des Spiels (Fensters)
+    Die aktuell aktive Szene.
 
     :type: Szene
     """
+
+    fenster_szene = None
+    """
+    Die ZeichenFlaeche des Spiels (Fensters). Diese wird am Anfang einmal gesetzt.
+
+    :type: Szene
+    """
+
     szenen = []
     """
     :type: list[Szene]
@@ -44,6 +54,8 @@ class Szene(SzenenListe):
         Szene.fenster_szene = szene
         Szene.szenen.remove(szene)
         Szene.aktive_szene = szene
+
+        # Die Fensterszene leitet nichts weiter
         szene.ereignis_weiterleiten = False
 
     def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=False, farbe=None, elter=None):
@@ -55,7 +67,8 @@ class Szene(SzenenListe):
         self.breite = breite
         self.hoehe = hoehe
 
-        self.flaeche = _Flaeche(breite, hoehe, pyg_flaeche, transparent)
+        # Die Szene selbst zeichnet auf einer Fläche, die auf das Fenster gezeichnet wird.
+        self.flaeche = Bemalbar(breite, hoehe, pyg_flaeche, transparent)
         self.farbe = farbe
 
         self.ereignis_weiterleiten = True
@@ -65,6 +78,13 @@ class Szene(SzenenListe):
         Wird aufgerufen, falls eine beliebige Tasten gedrückt wird.
 
         :type: pyenguin.EreignisBearbeiter
+        """
+
+        self._maus_klick_dinge = []
+        """
+        Die Liste der Maus aktiven Flächen.
+
+        :type: list[pyenguin.BewegbaresSzenenDing]
         """
 
         self._tasten = {}
@@ -78,26 +98,34 @@ class Szene(SzenenListe):
         self._maus_losgelassen = EreignisBearbeiter()
         self._maus_bewegt = EreignisBearbeiter()
 
-        self._aktualisierbar = []
-        """
-        :type: list[pyenguin.dinge.Aktualisierbar]
-        """
-
         # Benötigt, damit kein Unterschied zwischen Gruppen und Szenen
         self.szene = self
 
         # globale Szenen liste
         Szene.szenen.append(self)
 
+    def neues_maus_klick_ding(self, was):
+        if isinstance(was, BewegbaresSzenenDing):
+            self._maus_klick_dinge.append(was)
+        else:
+            print("Kann %s nicht zu den Mausklickelement hinzufügen!" % str(was))
+
+    def entferne_maus_klick_ding(self, was):
+        if was in self._maus_klick_dinge:
+            self._maus_klick_dinge.remove(was)
+
+    def raus(self, was):
+        SzenenListe.raus(self, was)
+        self.entferne_maus_klick_ding(was)
+
+    def dazu(self, was):
+        SzenenListe.dazu(self, was)
+        if was.bei_maus_klick is not None:
+            self.neues_maus_klick_ding(was)
+
     def __del__(self):
         if self != Szene.fenster_szene:
             Szene.szenen.remove(self)
-
-    def registriere_aktualiserbar(self, was):
-        self._aktualisierbar.append(was)
-
-    def entferne_aktualiserbar(self, was):
-        self._aktualisierbar.remove(was)
 
     def zeichne(self, dt):
         self.zeichne_alles(dt)
@@ -107,11 +135,7 @@ class Szene(SzenenListe):
         if self.farbe is not None:
             self.flaeche.fuelle(self.farbe)
 
-        for akt in self._aktualisierbar:
-            akt.aktualisiere(dt)
-
-        for ele in self.liste:
-            print(ele)
+        for ele in self.kind_elemente:
             ele.aktualisiere(dt)
             if ele.sichtbar:
                 ele.zeichne(self.flaeche)
@@ -140,8 +164,18 @@ class Szene(SzenenListe):
 
     @classmethod
     def finde_szene(cls, x, y):
+        """
+        Sucht die Szene, die die angegeben Koordinaten enthält.
+
+        :param x:
+        :type x:
+        :param y:
+        :type y:
+        :return: Die Szene mit den Koordinaten oder die Fensterszene
+        :rtype:
+        """
         for s in cls.szenen:
-            if s.hat_punkt(x, y):
+            if s.punkt_innerhalb(x, y):
                 return s
         return Szene.fenster_szene
 
@@ -156,8 +190,14 @@ class Szene(SzenenListe):
     @classmethod
     def verarbeite_maus_geklickt(cls, ereignis):
         Szene.aktive_szene = cls.finde_szene(ereignis.pos[0], ereignis.pos[1])
-        Szene.aktive_szene._maus_geklickt(ereignis.pos[0] - Szene.aktive_szene.x,
-                                          ereignis.pos[1] - Szene.aktive_szene.y, ereignis)
+        sx = ereignis.pos[0] - Szene.aktive_szene.x
+        sy = ereignis.pos[1] - Szene.aktive_szene.y
+        Szene.aktive_szene._maus_geklickt(sx, sy, ereignis)
+
+        # Das Klickereignis an alle aktiven Flächen weiterleiten
+        for ele in Szene.aktive_szene._maus_klick_dinge:
+            if ele.punkt_innerhalb(sx, sy):
+                ele.bei_maus_klick(sx, sy, ereignis)
 
         if Szene.aktive_szene.ereignis_weiterleiten:
             Szene.fenster_szene._maus_geklickt(ereignis.pos[0], ereignis.pos[1], ereignis)
@@ -328,7 +368,7 @@ class Szene(SzenenListe):
         """
         self._maus_geklickt.entferne(funktion)
 
-    def hat_punkt(self, x, y):
+    def punkt_innerhalb(self, x, y):
         left = (self.x <= x <= (self.x + self.breite))
         top = (self.y <= y <= (self.y + self.hoehe))
 
