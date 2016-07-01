@@ -10,7 +10,11 @@ fenster = Fenster(640, 480, "Hallo Fenster")
 BildSpeicher.lade_aus_paket("blocky", "spieler/p1_stand.png")
 
 # Figur erstellen. Gib hier den Bildnamen im Speicher an
-figur = Figur("blocky")
+figur = Figur(BildSpeicher.gib("blocky"))
+
+import pygame
+groessen = pygame.display.list_modes()
+pygame.display.set_mode(groessen[0], pygame.FULLSCREEN)
 
 # Das Fenster starten
 fenster.starten()
