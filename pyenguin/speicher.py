@@ -143,7 +143,7 @@ class _BildSpeicher(_Speicher):
         :param schluessel:
         :type schluessel:
         :return:
-        :rtype: Bild
+        :rtype: pyenguin.bild.Bild
         """
         return super().gib(schluessel)
 

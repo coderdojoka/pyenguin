@@ -21,7 +21,7 @@ class Gitter(Szene):
         self.registriere_maus_geklickt(lambda a, b, c: print("kkk"))
 
         if zahlen:
-            from pyenguin.schrift import Schrift
+            from pyenguin.flaeche import Schrift
             schrift = Schrift(20)
 
         for i in range(1, anzahl):

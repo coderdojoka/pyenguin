@@ -1,7 +1,6 @@
-__author__ = 'Mark Weinreuter'
-
 import os
 
+__author__ = 'Mark Weinreuter'
 __ordner_pfad = os.path.dirname(__file__)
 
 
@@ -21,12 +20,14 @@ def kombiniere_pfad(*pfade):
 def existiert_datei(pfad):
     return os.path.exists(pfad)
 
+
 def existiert_datei_fehler(pfad):
     ex = existiert_datei(pfad)
     if not ex:
         print("Die Datei: '%s' existiert nicht." % pfad)
 
     return ex
+
 
 def lese_datei(dateipfad, start_ordner="", modus="r", encoding="utf-8"):
     pfad = os.path.join(start_ordner, dateipfad)
@@ -70,7 +71,7 @@ def liste_dateien_rekursiv(pfad, endungen=(), start_ordner="", ergebnis_liste=No
             continue
 
         pos = datei.rfind(".")
-        if len(endungen) == 0 or (pos > -1 and datei[pos+1:] in endungen):
+        if len(endungen) == 0 or (pos > -1 and datei[pos + 1:] in endungen):
             ergebnis_liste.append(neuer_pfad)
 
     return ergebnis_liste
@@ -101,5 +102,5 @@ def pfade_und_schluessel(pfade, schluessel):
 
 if __name__ == "__main__":
     l = liste_dateien_rekursiv("resourcen", ("png"))
-    pus = pfade_und_schluessel(["a", "c"], "b")
+    pus = list(pfade_und_schluessel(["a", "c"], "b"))
     print(pus)

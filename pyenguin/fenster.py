@@ -2,11 +2,10 @@ import logging
 import sys
 
 import pygame
-from pygame.constants import QUIT, MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN, KEYDOWN, KEYUP, K_ESCAPE
-
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.gitter import Gitter
 from pyenguin.szene import Szene
+from pygame.constants import QUIT, MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN, KEYDOWN, KEYUP, K_ESCAPE
 
 __author__ = 'Mark Weinreuter'
 
@@ -54,7 +53,7 @@ class Fenster:
     """
 
     def __init__(self, breite=640, hoehe=480, titel="pyenguin Zeichenbibliothek",
-                 aktualisierungs_funktion=lambda zeit: None):
+                 aktualisierungs_funktion=lambda zeit: None, flags=0):
         """
         Initialisiert das Fenster.
 
@@ -126,7 +125,7 @@ class Fenster:
         # Fenstertitel
         self.setze_fenster_titel(titel)
 
-        Szene.init(Szene(breite, hoehe, pygame.display.set_mode((breite, hoehe)),
+        Szene.init(Szene(breite, hoehe, pygame.display.set_mode((breite, hoehe), flags),
                          farbe=(255, 255, 255)))
 
         # setze ESC handler um das Fenster zu schließen
@@ -243,3 +242,13 @@ class Fenster:
 
     def zeichne_gitter(self, groesse=50, zahlen=True):
         gitter = Gitter(self.breite, self.hoehe, groesse=groesse, zahlen=zahlen)
+
+
+class VollbildFenster(Fenster):
+    def __init__(self, titel="", aktualisierungs_funktion=lambda zeit: None, flags=0, index=0):
+        groessen = pygame.display.list_modes()
+        w, h = groessen[index]
+        print("Verwende Bildschirmgröße: %dx%d", w, h)
+
+        super().__init__(w, h, titel, aktualisierungs_funktion,
+                         flags=flags | pygame.FULLSCREEN)

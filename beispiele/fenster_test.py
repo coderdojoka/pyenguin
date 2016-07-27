@@ -4,7 +4,7 @@ __author__ = 'Mark Weinreuter'
 
 aktuelles_fenster = Fenster()
 
-f = Bemalbar(40, 40, transparent=True)
+f = Flaeche(40, 40, transparent=True)
 f.kreis(0, 0, 20, (255, 0, 0))
 r = Rechteck(100, 100, 50, 50, (0, 24, 55))
 k = Kreis(30, 40, 20, (0, 255, 0))
@@ -22,8 +22,8 @@ BildSpeicher.lade_aus_paket("fliege_tot", ["gegner/fliege_tot.png"])
 
 f.bild("fliege_tot", 10, 10)
 
-af = Figur("fliege_0")
-af.neue_bilder("fliege_1")
+af = Figur(BildSpeicher.gib("fliege_0"))
+af.neue_kostueme(BildSpeicher.gib("fliege_1"))
 
 aktuelles_fenster.registriere_aktualisierung(test)
 Szene.fenster_szene.registriere_maus_geklickt(lambda x, y, b: print(x, y, b))
@@ -32,7 +32,7 @@ Szene.fenster_szene.registriere_maus_bewegt(lambda x, y, e: af.setze_position(x,
 
 def unten(a):
     print(a)
-    af.naechstes_bild()
+    af.naechstes()
 
 
 Szene.fenster_szene.registriere_taste_unten(T_LEER, unten)

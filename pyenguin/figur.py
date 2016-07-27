@@ -1,15 +1,19 @@
-from pyenguin.dinge import Gruppe, Bewegbar
-from pyenguin.objekte import BewegbaresSzenenDing
+from pyenguin.flaeche import Flaeche
+from pyenguin.szene import Bewegbar
+from pyenguin.szene import Gruppe
 
 __author__ = 'Mark Weinreuter'
 
 
 class Figur(Gruppe):
-    def __init__(self, objekte, elter=None):
+    def __init__(self, objekte):
         self._aktuelles_objekt = None
+        """
+        :type: Flaeche
+        """
         self._aktueller_index = 0
 
-        Gruppe.__init__(self, elter=elter)
+        Gruppe.__init__(self)
         self.neue_kostueme(objekte)
 
     def aktualisiere(self, dt):
@@ -19,16 +23,16 @@ class Figur(Gruppe):
     def zeichne(self, flaeche):
         flaeche.pyg_flaeche.blit(
             self._aktuelles_objekt.pyg_flaeche,
-            (self._welt_x_off + self.links - self._aktuelles_objekt.halbe_breite,
-             self._welt_y_off + self.oben - self._aktuelles_objekt.halbe_hoehe),
+            (self.welt_x_off + self.links - self._aktuelles_objekt.halbe_breite,
+             self.welt_y_off + self.oben - self._aktuelles_objekt.halbe_hoehe),
             self._aktuelles_objekt.ausschnitt)
 
     def neue_kostueme(self, objekte):
-        if isinstance(objekte, BewegbaresSzenenDing):
+        if isinstance(objekte, Flaeche):
             objekte = [objekte]
 
         for o in objekte:
-            if not isinstance(o, BewegbaresSzenenDing):
+            if not isinstance(o, Flaeche):
                 raise AttributeError("Kann %s (%s) nicht hinzufügen! Es muss zeichenbar sein." % (str(o), str(type(o))))
 
             self.dazu(o)

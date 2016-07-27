@@ -1,10 +1,10 @@
 from pyenguin.cursor import MausZeiger
-from pyenguin.dinge import Gruppe, Warte, Aktualisierbar
+from pyenguin.szene import Gruppe
+from pyenguin.zeit import Warte
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.farben import *
-from pyenguin.fenster import Fenster
-from pyenguin.objekte import Flaeche, Text
-from pyenguin.schrift import *
+from pyenguin.fenster import Fenster, VollbildFenster
+from pyenguin.flaeche import Flaeche, Text, Schrift
 from pyenguin.sound import HintergrundMusik
 from pyenguin.speicher import BildSpeicher, SoundSpeicher
 from pyenguin.szene import Szene
@@ -17,7 +17,7 @@ __author__ = 'Mark Weinreuter'
 
 
 def Rechteck(x, y, breite, hoehe, farbe, dicke=0):
-    f = Flaeche(breite, hoehe, transparent=False)
+    f = Flaeche(breite, hoehe, transparent=True)
     f.rechteck(0, 0, breite, hoehe, farbe, dicke=dicke)
     f.links = x
     f.oben = y
@@ -206,9 +206,9 @@ def entferne_maus_geklickt(funktion):
 __HANDLER_NAMEN = list(filter(lambda s: s.find("registriere_") > -1 or s.find("entferne_") > -1, globals().keys()))
 
 __all__ = [ "Bild", "BildAnimation", "generiere_namen_liste",
-    "BildSpeicher", "SoundSpeicher", "Figur", "Szene", "Fenster", "Flaeche", "Gruppe",
+    "BildSpeicher", "SoundSpeicher", "Figur", "Szene", "Fenster", "VollbildFenster", "Flaeche", "Gruppe",
     "EreignisBearbeiter", "Schrift", "Text", "Rechteck", "Kreis", "Oval", "Vieleck",
-    "MausZeiger", "HintergrundMusik", "Warte", "Aktualisierbar"]
+    "MausZeiger", "HintergrundMusik", "Warte"]
 
 __all__.extend(FARBEN_NAMEN)
 __all__.extend(TASTEN_NAMEN)

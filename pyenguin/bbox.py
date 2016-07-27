@@ -44,7 +44,7 @@ class Box(pygame.Rect):
         self._y = 0
         self._halbe_breite = self.width / 2
         self._halbe_hoehe = self.height / 2
-        self.bewegt = EreignisBearbeiter()
+        self.bewegt = lambda: None
 
     def __str__(self):
         return "Box(%d, %d, %d, %d)" % (self._x, self._y, self.width, self.height)
@@ -144,7 +144,9 @@ class Box(pygame.Rect):
 
     def setze_dimension(self, breite, hoehe):
         self.width = breite
+        self._halbe_breite = breite / 2
         self.height = hoehe
+        self._halbe_hoehe = hoehe / 2
 
     def dimension(self):
         return self.width, self.height
@@ -153,8 +155,11 @@ class Box(pygame.Rect):
 class Bewegbar(Box):
     def __init__(self, breite, hoehe):
         Box.__init__(self, 0, 0, breite, hoehe)
-        self._welt_x_off = 0
-        self._welt_y_off = 0
+
+        # Diese Werte werden beim aktualisieren des
+        # Elternelements gesetzt
+        self.welt_x_off = 0
+        self.welt_y_off = 0
 
         self._x_bewegung = 0
         self._y_bewegung = 0
@@ -177,11 +182,11 @@ class Bewegbar(Box):
 
     @property
     def welt_x(self):
-        return self._welt_x_off + self._x
+        return self.welt_x_off + self._x
 
     @property
     def welt_y(self):
-        return self._welt_y_off + self._y
+        return self.welt_y_off + self._y
 
     def aktualisiere(self, dt):
         self.aendere_position(dt * self._x_bewegung, dt * self._y_bewegung)
@@ -191,9 +196,7 @@ class Bewegbar(Box):
         self._y_bewegung = 0
 
     def __str__(self):
-        return ": Pos: %d(%d), %d(%d), %dx%d" % (self._x, self._welt_x_off, self._y, self._welt_y_off, self.width, self.height)
-
-
+        return ": Pos: %d(%d), %d(%d), %dx%d" % (self._x, self.welt_x_off, self._y, self.welt_y_off, self.width, self.height)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,253 @@
-from pyenguin.dinge import SzenenListe, BewegbaresSzenenDing
+from pyenguin.bbox import Bewegbar
 from pyenguin.ereignis import EreignisBearbeiter
-from pyenguin.objekte import Bemalbar
 from pyenguin.tasten import Taste
 
 __author__ = 'Mark Weinreuter'
+
+
+class SzenenDing(object):
+    """
+    Kleinste Einheit, die zu einer Szene gehört.
+    Diese hat einen Verweis, auf die dazugehörige Szene und ihr Elternelement.
+    Das Elternelement kann entweder die Szene sein oder eine beliebige Gruppe dieser Szene.
+    """
+    ANZAHL = 0
+
+    @classmethod
+    def nummer(cls):
+        cls.ANZAHL += 1
+        return str(cls.ANZAHL)
+
+    def __init__(self, prefix=None, elter=None):
+        if prefix is None:
+            prefix = str(self.__class__.__name__)
+        self.name = prefix + SzenenDing.nummer()
+
+        self.sichtbar = True
+        self.ist_entfernt = False
+
+        self.szene = None
+        """
+        Die Szene zu der dieses Objekt gehört.
+
+        :type: szene.Szene
+        """
+
+        self.eltern_element = None
+        """
+        Die Szene oder Gruppe, in der dieses Element liegt.
+
+        :type: pyenguin.zeichnen.SzenenListe
+        """
+
+        # Setzt den Elternverweis
+        if elter is not None:
+            elter.dazu(self)
+        else:
+            Szene.fenster_szene.dazu(self)
+
+    def __del__(self):
+        if not self.ist_entfernt and self.eltern_element:
+            self.eltern_element.raus(self)
+
+    def aktualisiere(self, dt):
+        raise NotImplemented("Muss überschrieben werden!")
+
+    def zeichne(self, flaeche):
+        raise NotImplemented("Muss überschrieben werden!")
+
+    def entferene(self):
+        self.ist_entfernt = True
+        self.eltern_element.raus(self)
+
+    def wechsle_szene(self, s):
+        """
+
+        :param s:
+        :type s: szene.Szene
+        :return:
+        :rtype:
+        """
+
+        if not isinstance(s, Szene):
+            print("%s muss einen Szene sein" % s)
+
+        if s == self.szene:
+            print("Objekt ist schon Teil dieser Szene!")
+            return
+
+        # Wir müssen auf die Event-Bindungen achten!!
+        s.dazu(self)
+        if self.bei_maus_klick:
+            self.szene.entferne_maus_klick_ding(self)
+            s.neues_maus_klick_ding(self)
+
+    def wechsle_gruppe(self, gruppe):
+
+        if not isinstance(gruppe, Gruppe):
+            print("%s muss eine Gruppe sein" % gruppe)
+            return
+
+        if gruppe.szene != self.szene:
+            print("Dieses Objekte und die Gruppe müssen zur gleichen Szene gehören!")
+            return
+
+        if gruppe == self.eltern_element:
+            print("Objekt ist schon Teil dieser Gruppe!")
+            return
+
+        # Führt den Wechsel (entfernen und hinzufügen) durch
+        gruppe.dazu(self)
+
+    def nach_vorne(self):
+        self.eltern_element.kind_elemente.remove(self)
+        self.eltern_element.kind_elemente.append(self)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return self.name.__hash__()
+
+
+class BewegbaresSzenenDing(Bewegbar, SzenenDing):
+    def __init__(self, breite, hoehe, elter=None):
+        self.bei_maus_klick = None
+
+        SzenenDing.__init__(self, elter=elter)
+        Bewegbar.__init__(self, breite, hoehe)
+        if self.szene is not None:
+            self.setze_position(self.szene.breite / 2, self.szene.hoehe / 2)
+
+    def setze_bei_maus_klick(self, funktion):
+        self.bei_maus_klick = funktion
+        self.szene.neues_maus_klick_ding(self)
+
+    def entferne_bei_maus_klick(self):
+        self.bei_maus_klick = lambda: None
+        self.szene.entferne_maus_klick_ding(self)
+
+    @property
+    def abstand_rechts(self):
+        return self.szene.breite - self.rechts
+
+    @abstand_rechts.setter
+    def abstand_rechts(self, wert):
+        self.rechts = self.szene.breite - wert
+
+    @property
+    def abstand_links(self):
+        return self.links
+
+    @abstand_links.setter
+    def abstand_links(self, wert):
+        self.links = wert
+
+    @property
+    def abstand_unten(self):
+        return self.szene.hoehe - self.unten
+
+    @abstand_unten.setter
+    def abstand_unten(self, wert):
+        self.unten = self.szene.hoehe - wert
+
+    @property
+    def abstand_oben(self):
+        return self.oben
+
+    @abstand_oben.setter
+    def abstand_oben(self, wert):
+        self.oben = wert
+
+    def zentriere(self):
+        self.setze_position(self.szene.breite / 2, self.szene.hoehe / 2)
+
+    def raus_links(self):
+        return self.welt_x_off + self.links < 0
+
+    def ist_rechts_raus(self):
+        return self.welt_x_off + self.rechts > self.szene.breite
+
+    def ist_oben_raus(self):
+        return self.welt_y_off + self.oben < 0
+
+    def ist_unten_raus(self):
+        return self.welt_y_off + self.unten > self.szene.hoehe
+
+    def ist_raus(self):
+        return self.raus_links() or self.ist_rechts_raus() or self.ist_oben_raus() or self.ist_unten_raus()
+
+    def ist_linksrechts_raus(self):
+        return self.raus_links() or self.ist_rechts_raus()
+
+    def ist_obenunten_raus(self):
+        return self.ist_oben_raus() or self.ist_unten_raus()
+
+    def __str__(self):
+        return self.name + ": Pos: %d(%d), %d(%d), %dx%d" % (self._x, self.welt_x_off, self._y, self.welt_y_off, self.width, self.height)
+
+
+class SzenenListe(object):
+    def __init__(self):
+
+        self.kind_elemente = []
+        """
+        :type: list[SzenenDing]
+        """
+        self.anzahl = 0
+
+    def dazu(self, was):
+        if not isinstance(was, SzenenDing):
+            print("%s kann nicht hinzufügt werden!" % str(was))
+            return
+
+        if isinstance(was, Szene):
+            return
+
+        alte_liste = was.eltern_element
+        if alte_liste is not None:
+            alte_liste.raus(was)
+
+        self.kind_elemente.append(was)
+        self.anzahl += 1
+
+        was.eltern_element = self
+        was.szene = self.szene
+
+    def raus(self, was):
+        if was in self.kind_elemente:
+            self.kind_elemente.remove(was)
+            self.anzahl -= 1
+        else:
+            print("%s ist nicht in %s." % (str(was), str(self)))
+
+
+class Gruppe(BewegbaresSzenenDing, SzenenListe):
+    def __init__(self, elter=None):
+        BewegbaresSzenenDing.__init__(self, 0, 0)
+        SzenenListe.__init__(self)
+
+    def aktualisiere(self, dt):
+        super().aktualisiere(dt)
+
+        x_off = self.welt_x_off + self._x
+        y_off = self.welt_y_off + self._y
+
+        for element in self.kind_elemente:
+            element.welt_x_off = x_off
+            element.welt_y_off = y_off
+            element.aktualisiere(dt)
+
+    def zeichne(self, flaeche):
+        if not self.sichtbar:
+            return
+
+        for element in self.kind_elemente:
+            if element.sichtbar and not element.ist_raus():
+                element.zeichne(flaeche)
 
 
 class TopLevel:
@@ -20,7 +264,7 @@ class TopLevel:
 top = TopLevel()
 
 
-class Szene(SzenenListe):
+class Szene(SzenenDing, SzenenListe):
     """
     Eine Szene stellt einen Ausschnitt des Fensters da.
     Ein normales Program hat nur eine Szene, die das ganze Fenster füllt.
@@ -37,7 +281,7 @@ class Szene(SzenenListe):
     :type: Szene
     """
 
-    fenster_szene = None
+    fenster_szene = top
     """
     Die ZeichenFlaeche des Spiels (Fensters). Diese wird am Anfang einmal gesetzt.
 
@@ -58,8 +302,9 @@ class Szene(SzenenListe):
         # Die Fensterszene leitet nichts weiter
         szene.ereignis_weiterleiten = False
 
-    def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=False, farbe=None, elter=None):
-        SzenenListe.__init__(self, elter=top)
+    def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=False, farbe=None):
+        SzenenDing.__init__(self, elter=top)
+        SzenenListe.__init__(self)
 
         self.x = 0
         self.y = 0
@@ -67,8 +312,6 @@ class Szene(SzenenListe):
         self.breite = breite
         self.hoehe = hoehe
 
-        # Die Szene selbst zeichnet auf einer Fläche, die auf das Fenster gezeichnet wird.
-        self.flaeche = Bemalbar(breite, hoehe, pyg_flaeche, transparent)
         self.farbe = farbe
 
         self.ereignis_weiterleiten = True
@@ -100,6 +343,11 @@ class Szene(SzenenListe):
 
         # Benötigt, damit kein Unterschied zwischen Gruppen und Szenen
         self.szene = self
+        self.eltern_element = top
+
+        # Die Szene selbst zeichnet auf einer Fläche, die auf das Fenster gezeichnet wird.
+        from pyenguin.flaeche import Flaeche
+        self.flaeche = Flaeche(breite, hoehe, pyg_flaeche, transparent, top)
 
         # globale Szenen liste
         Szene.szenen.append(self)
@@ -114,18 +362,10 @@ class Szene(SzenenListe):
         if was in self._maus_klick_dinge:
             self._maus_klick_dinge.remove(was)
 
-    def raus(self, was):
-        SzenenListe.raus(self, was)
-        self.entferne_maus_klick_ding(was)
-
-    def dazu(self, was):
-        SzenenListe.dazu(self, was)
-        if was.bei_maus_klick is not None:
-            self.neues_maus_klick_ding(was)
-
     def __del__(self):
         if self != Szene.fenster_szene:
-            Szene.szenen.remove(self)
+            if self in Szene.szenen:
+                Szene.szenen.remove(self)
 
     def zeichne(self, dt):
         self.zeichne_alles(dt)
@@ -140,8 +380,11 @@ class Szene(SzenenListe):
             if ele.sichtbar:
                 ele.zeichne(self.flaeche)
 
-    def fokusiere(self):
+    def mache_aktiv(self):
         Szene.aktive_szene = self
+
+    def ist_aktiv(self):
+        return self == Szene.aktive_szene
 
     @classmethod
     def zeichne_szenen(cls, dt):
@@ -175,7 +418,8 @@ class Szene(SzenenListe):
         :rtype:
         """
         for s in cls.szenen:
-            if s.punkt_innerhalb(x, y):
+            from pyenguin.gitter import Gitter
+            if not isinstance(s, Gitter) and s.punkt_innerhalb(x, y):
                 return s
         return Szene.fenster_szene
 
@@ -192,12 +436,13 @@ class Szene(SzenenListe):
         Szene.aktive_szene = cls.finde_szene(ereignis.pos[0], ereignis.pos[1])
         sx = ereignis.pos[0] - Szene.aktive_szene.x
         sy = ereignis.pos[1] - Szene.aktive_szene.y
-        Szene.aktive_szene._maus_geklickt(sx, sy, ereignis)
 
-        # Das Klickereignis an alle aktiven Flächen weiterleiten
+        # Das Klick-Ereignis an alle aktiven Dinge weiterleiten
         for ele in Szene.aktive_szene._maus_klick_dinge:
             if ele.punkt_innerhalb(sx, sy):
                 ele.bei_maus_klick(sx, sy, ereignis)
+
+        Szene.aktive_szene._maus_geklickt(sx, sy, ereignis)
 
         if Szene.aktive_szene.ereignis_weiterleiten:
             Szene.fenster_szene._maus_geklickt(ereignis.pos[0], ereignis.pos[1], ereignis)
@@ -369,7 +614,25 @@ class Szene(SzenenListe):
         self._maus_geklickt.entferne(funktion)
 
     def punkt_innerhalb(self, x, y):
-        left = (self.x <= x <= (self.x + self.breite))
-        top = (self.y <= y <= (self.y + self.hoehe))
+        links = (self.x <= x <= (self.x + self.breite))
+        oben = (self.y <= y <= (self.y + self.hoehe))
 
-        return left and top
+        return links and oben
+
+
+if __name__ == "__main__":
+    import pygame
+
+    pygame.display.init()
+    pyg = pygame.display.set_mode((200, 200))
+    Szene.fenster_szene = Szene(200, 200, pyg)
+    b = BewegbaresSzenenDing(10, 10)
+    b2 = BewegbaresSzenenDing(50, 50)
+    b2.x = 100
+    b2.y = -30
+
+    print(b)
+
+    b._x_bewegung = 10
+    b.name = "Boxi"
+    print(b)

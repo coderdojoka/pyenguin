@@ -1,6 +1,6 @@
 from pygame.constants import *
 
-from pyenguin import EreignisBearbeiter
+from pyenguin.ereignis import EreignisBearbeiter
 
 __author__ = 'Mark Weinreuter'
 

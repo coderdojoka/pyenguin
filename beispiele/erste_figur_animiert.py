@@ -23,6 +23,7 @@ b.start()
 
 figur = Figur(b)
 figur.neue_kostueme(b1)
+
 figur.naechstes()
 figur.naechstes()
 

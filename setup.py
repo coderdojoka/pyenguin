@@ -1,13 +1,11 @@
 from setuptools import setup
 
-
 def readme():
     with open('README.md') as f:
         return f.read()
 
-
 setup(name='pyenguin',
-      version='0.1',
+      version='0.2',
       description='Wrapper for pygame to provide a simple drawing and gaming framework in German. '
                   'This project is developed for the use in the CoderDojo Karlsruhe. '
                   'This project uses pygameui by Fictorial to display GUI elements.',

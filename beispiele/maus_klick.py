@@ -23,9 +23,43 @@ def maus_bewegt(x, y, ereignis):
     print(maus_position)
 
 
+def zeit_abgelaufen():
+    print("Wartezeit ist abgelaufen")
+
+
+def zeit_wieder_abgelaufen():
+    print("Wartezeit ist schon wieder abgelaufen")
+
+
+def wenn_beendet():
+    print("Fenster wird geschloßen.")
+
+
+fenster.registriere_wird_beendet(wenn_beendet)
+
+
+# In 1000 ms = 1s wird die Funktion zeit_abgelaufen ausgeführt
+# Warte(1000, zeit_abgelaufen)
+# Alle 1000ms wird die Funktion zeit_wieder_abgelaufen ausgeführt
+# Warte(1000, zeit_wieder_abgelaufen, True)
+
+
 # Wird aufgerufen, immer wenn die Maus gedrueckt (geklickt) wird
 def maus_gedrueckt(x, y, ereignis):
     maus_position = (x, y)
+    print(ereignis.button)
+    # Maus-Button Nummern:
+    # 1: Links
+    # 2: Mitte (Mausrad)
+    # 3: Rechts
+    # Diese Nummern habe ich auf meinem Laptop mit Touchpad bekommen
+    # 4: Scroll hoch
+    # 5: Scroll runter
+    # 6: Scroll rechts
+    # 7: Scroll links
+
+    if ereignis.button != 1:
+        return
 
     if box.punkt_innerhalb(maus_position):
         box.farbe = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -42,6 +76,8 @@ registriere_maus_geklickt(maus_gedrueckt)
 
 # Bindet die Funktion 'maus_bewegt' an das maus_bewegt-Ereignis
 registriere_maus_bewegt(maus_bewegt)
+
+dreieck.setze_bei_maus_klick(lambda x, y, e: dreieck.entferene())
 
 # Hilfsgitter einblenden
 fenster.zeichne_gitter()

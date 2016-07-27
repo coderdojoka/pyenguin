@@ -1,25 +1,9 @@
 import pygame
-
-from pyenguin.objekte import Flaeche
-from .speicher import BildSpeicher
 from pyenguin.ereignis import EreignisBearbeiter
+from pyenguin.flaeche import Flaeche
+from pyenguin.speicher import BildSpeicher
 
 __author__ = 'Mark Weinreuter'
-
-
-class Bild(Flaeche):
-    def __init__(self, bild, transparent=True, elter=None):
-
-        if isinstance(bild, str):
-            self._pygame_bild = BildSpeicher.gib_pygame_bild(bild)
-        elif isinstance(bild, pygame.Surface):
-            self._pygame_bild = bild
-        else:
-            raise ValueError("Bitte Schlüssel des Bildes im Bildspeicher angeben.")
-
-        Flaeche.__init__(self, self._pygame_bild.get_width(), self._pygame_bild.get_height(),
-                          self._pygame_bild, transparent=transparent, elter=elter)
-
 
 GESTOPPT = 0
 GESTARTET = 1
@@ -42,6 +26,20 @@ def generiere_namen_liste(namen_muster, von, bis):
     :rtype: list[str]
     """
     return [namen_muster % i for i in range(von, bis)]
+
+
+class Bild(Flaeche):
+    def __init__(self, bild, transparent=True, ):
+
+        if isinstance(bild, str):
+            self._pygame_bild = BildSpeicher.gib_pygame_bild(bild)
+        elif isinstance(bild, pygame.Surface):
+            self._pygame_bild = bild
+        else:
+            raise ValueError("Bitte Schlüssel des Bildes im Bildspeicher angeben.")
+
+        Flaeche.__init__(self, self._pygame_bild.get_width(), self._pygame_bild.get_height(),
+                         self._pygame_bild, transparent=transparent)
 
 
 class BildAnimation(Flaeche):

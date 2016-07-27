@@ -84,5 +84,12 @@ registriere_taste_unten(T_OBEN, oben)
 registriere_taste_oben(T_LINKS, links_oben)
 registriere_taste_oben(T_RECHTS, links_oben)
 
+rechteck.nach_vorne()
+def zeit_um():
+    rechteck.rotiere(5)
+    print(rechteck)
+
+Warte(100, zeit_um, True)
+
 # Das fenster starten
 fenster.starten()
