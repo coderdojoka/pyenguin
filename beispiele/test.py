@@ -30,26 +30,22 @@ BildSpeicher.lade_aus_paket("snail2", "gegner/blocker_sauer.png")
 BildSpeicher.lade_aus_paket("fliege", ["gegner/fliege_fliegen1.png", "gegner/fliege_fliegen2.png"])
 
 
-f = Figur("snail")
-f.neue_bilder("snail2")
+f = Figur(BildSpeicher.gib("snail"))
+f.neue_kostueme(BildSpeicher.gib("snail2"))
 
 f.wechsle_bilder = True
 szene_rechts.dazu(f)
 f.oben = 200
 f.rechts = 200
 
-f2 = Figur(["fliege_0", "fliege_1"])
+f2 = Figur([BildSpeicher.gib("fliege_0"), BildSpeicher.gib("fliege_1")])
 f2.wechsle_bilder = True
 f2.wechsel_dauer = 100
 szene_rechts.dazu(f2)
 f2.unten = 200
 f2.links = 20
 
-HintergrundMusik.lade_aus_paket("acdc.ogg")
-HintergrundMusik.setze_lautstaerke(.2)
-HintergrundMusik.start()
 MausZeiger.neu("..", MausZeiger.cursor_m_strings)
 
-w = Warte(3000, lambda : HintergrundMusik.pause())
 
 fenster.starten()

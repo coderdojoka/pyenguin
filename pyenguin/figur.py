@@ -14,7 +14,8 @@ class Figur(Gruppe):
         self._aktueller_index = 0
 
         Gruppe.__init__(self)
-        self.neue_kostueme(objekte)
+        breite, hoehe = self.neue_kostueme(objekte)
+        self.setze_dimension(breite, hoehe)
 
     def aktualisiere(self, dt):
         Bewegbar.aktualisiere(self, dt)
@@ -23,8 +24,8 @@ class Figur(Gruppe):
     def zeichne(self, flaeche):
         flaeche.pyg_flaeche.blit(
             self._aktuelles_objekt.pyg_flaeche,
-            (self.welt_x_off + self.links - self._aktuelles_objekt.halbe_breite,
-             self.welt_y_off + self.oben - self._aktuelles_objekt.halbe_hoehe),
+            (self.welt_x_off + self.x - self._aktuelles_objekt.halbe_breite,
+             self.welt_y_off + self.y - self._aktuelles_objekt.halbe_hoehe),
             self._aktuelles_objekt.ausschnitt)
 
     def neue_kostueme(self, objekte):
@@ -33,11 +34,13 @@ class Figur(Gruppe):
 
         for o in objekte:
             if not isinstance(o, Flaeche):
-                raise AttributeError("Kann %s (%s) nicht hinzufügen! Es muss zeichenbar sein." % (str(o), str(type(o))))
+                raise AttributeError("Kann %s (%s) nicht hinzufügen! Es muss eine Fläche sein." % (str(o), str(type(o))))
 
+            o.x = 0
+            o.y = 0
             self.dazu(o)
 
-        self._aktuelles_objekt = self.kind_elemente[self._aktueller_index]
+        self._aktuelles_objekt = self.kind_dinge[self._aktueller_index]
         return self._aktuelles_objekt.breite, self._aktuelles_objekt.hoehe
 
     def naechstes(self):
@@ -48,7 +51,7 @@ class Figur(Gruppe):
 
     def zeige_nummer(self, index):
         self._aktueller_index = index % self.anzahl
-        self._aktuelles_objekt = self.kind_elemente[self._aktueller_index]
+        self._aktuelles_objekt = self.kind_dinge[self._aktueller_index]
         self.setze_dimension(self._aktuelles_objekt.breite, self._aktuelles_objekt.hoehe)
 
     def __hash__(self):

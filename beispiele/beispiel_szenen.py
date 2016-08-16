@@ -17,21 +17,29 @@ p = Vieleck([(10, 10), (15, 20), (20, 10)], GRAU)
 o.wechsle_szene(s_links)
 p.wechsle_szene(s_rechts)
 
-
+s_links.verstecke()
+Warte(2000, lambda: s_links.zeige())
 
 
 # Jede Szene hat ihre EIGENEN Maus-Ereignisse!!
 
 def links_geklickt(x, y, ereignis):
-    print("Klick links!")
+    print("Klick Szene links!")
 
 
 def rechts_geklickt(x, y, ereignis):
-    print("Klick rechts!")
+    print("Klick Szene rechts!")
+
+
+def fenster_geklickt(x, y, ereignis):
+    print("Klick Fenster!")
 
 
 s_rechts.registriere_maus_geklickt(rechts_geklickt)
 s_links.registriere_maus_geklickt(links_geklickt)
+s_links.ereignis_weiterleiten = False
+registriere_maus_geklickt(fenster_geklickt)
+
 
 s_links.registriere_maus_bewegt(lambda x, y, e: o.setze_position(x, y))
 s_rechts.registriere_maus_bewegt(lambda x, y, e: p.setze_position(x, y))

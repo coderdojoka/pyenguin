@@ -1,11 +1,29 @@
-from pyenguin.szene import SzenenDing
+from pyenguin.szene import Ding, Szene
 
 __author__ = 'Mark Weinreuter'
 
 
-class Warte(SzenenDing):
-    def __init__(self, dauer, was, wiederhole=False):
-        super().__init__()
+class Aktualisierbar(Ding):
+    def __init__(self, szene):
+        if szene is None:
+            szene = Szene.fenster_szene
+
+        super().__init__(szene=szene)
+        self.szene.registriere_aktualisiere(self.aktualisiere)
+
+    def entferne(self):
+        self.szene.entferne_aktualisiere(self.aktualisiere)
+
+    def aktualisiere(self, dt):
+        raise AttributeError("Muss überschrieben werden!")
+
+    def __call__(self, *args, **kwargs):
+        self.aktualisiere(*args, **kwargs)
+
+
+class Warte(Aktualisierbar):
+    def __init__(self, dauer, was, wiederhole=False, szene=None):
+        super().__init__(szene=szene)
         self.sichtbar = False
         self.was = was
         self.dauer = dauer

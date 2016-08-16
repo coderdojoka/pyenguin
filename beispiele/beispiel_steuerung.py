@@ -2,9 +2,8 @@ from pyenguin import *
 
 __author__ = 'Mark Weinreuter'
 
-speed = .1
-ball_x = 3
-ball_y = 1
+ball_x = .3
+ball_y = .1
 
 
 def aktualisiere(dt):
@@ -12,9 +11,9 @@ def aktualisiere(dt):
 
     # Überprüfen ob der Ball die Kanten berührt
     if ball.ist_rechts_raus():
-        ball_x = -2
+        ball_x *= -1
     elif ball.raus_links():
-        ball_x = 2
+        ball_x *= -1
 
     if ball.ist_obenunten_raus():
         ball_y *= -1
@@ -52,7 +51,7 @@ def unten(dt):
 
 
 # Initialisiert das Fenster
-fenster = Fenster(400, 400, "Steuere das blaue Rechteck!", aktualisiere)
+fenster = Fenster(400, 400, "Steuere das blaue Rechteck!")
 
 # Zwei Rechtecke erstellen
 rechteck = Rechteck(40, 160, 40, 40, BLAU)
@@ -90,6 +89,8 @@ def zeit_um():
     print(rechteck)
 
 Warte(100, zeit_um, True)
+
+registriere_aktualisiere(aktualisiere)
 
 # Das fenster starten
 fenster.starten()

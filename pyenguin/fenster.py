@@ -16,6 +16,17 @@ pygame.init()
 pygame.font.init()
 
 
+class FensterOptionen:
+    def __init__(self, breite=640, hoehe=480, titel="Mein Fenster", vollbild=False, aktualisiere=lambda: None, esc_taste=True):
+        self.titel = titel
+        self.breite = breite
+        self.hoehe = hoehe
+        self.vollbild = vollbild
+        self.aktualisiere = aktualisiere
+        self.esc_taste = esc_taste
+        self.fps = 30
+
+
 class Fenster:
     """
     Die Klasse, um ein Fenster anzuzeigen und die Schleife zu starten.
@@ -26,8 +37,6 @@ class Fenster:
         # ... Elemente und Ereignisse erstellen/registrieren
 
         fenster.starten()
-
-
 
     """
 
@@ -52,8 +61,7 @@ class Fenster:
     :type: float
     """
 
-    def __init__(self, breite=640, hoehe=480, titel="pyenguin Zeichenbibliothek",
-                 aktualisierungs_funktion=lambda zeit: None, flags=0):
+    def __init__(self, breite=640, hoehe=480, titel="pyenguin Zeichenbibliothek", flags=0):
         """
         Initialisiert das Fenster.
 
@@ -108,16 +116,6 @@ class Fenster:
         :type: pyenguin.EreignisBearbeiter
         """
 
-        self._wird_beendet = EreignisBearbeiter()
-        """
-        Funktion die aufgerufen wird, wenn das Spiel beendet wird.
-    
-        :type: pyenguin.EreignisBearbeiter
-        """
-
-        # die Aktualisierungsfunktion schleife
-        self.__aktualisiere.registriere(aktualisierungs_funktion)
-
         # Dimension des Fensters
         self.breite = breite
         self.hoehe = hoehe
@@ -125,21 +123,36 @@ class Fenster:
         # Fenstertitel
         self.setze_fenster_titel(titel)
 
+        # Die Hauptszene
         Szene.init(Szene(breite, hoehe, pygame.display.set_mode((breite, hoehe), flags),
                          farbe=(255, 255, 255)))
 
         # setze ESC handler um das Fenster zu schließen
         Szene.fenster_szene.registriere_taste_unten(K_ESCAPE, lambda taste: self.beenden())
 
-        global aktuelles_fenster
-        aktuelles_fenster = self
+        # Wir sind das aktuelle Fenster (THERE can only be ONE!!!)
+        if Fenster.aktuelles_fenster is not None:
+            raise AttributeError("Es kann NUR EIN Fenster geben!")
 
-    def beenden(self):
+        Fenster.aktuelles_fenster = self
+
+    def beenden(self, erzwingen=False):
         """
         Beendet und schließt das Fenster.
         """
-        self._wird_beendet()
-        self._ist_aktiv = False
+        if self.darf_beendet_werden() or erzwingen:
+            self._ist_aktiv = False
+
+    def darf_beendet_werden(self):
+        """
+        Funktion die aufgerufen wird, wenn das Spiel beendet wird.
+
+
+        :return: True, falls das Fenster geschlossen
+        :rtype: bool
+        """
+
+        return True
 
     def starten(self):
         """
@@ -193,7 +206,7 @@ class Fenster:
         # relativer Zeitunterschied
         self.relativer_unterschied = self.zeit_unterschied_ms / self.fps
 
-        # Alle registrierten Aktualisierungsfunktionen
+        # Alle registrierten Aktualisierungs-Funktionen
         self.__aktualisiere(self.relativer_unterschied)
 
         # Alle Instanzen, die von Aktualisierbar erben
@@ -201,6 +214,7 @@ class Fenster:
 
         # zeichne alles!!!
         Szene.zeichne_szenen(self.zeit_unterschied_ms)
+
 
     @staticmethod
     def setze_fenster_titel(titel):
@@ -212,43 +226,14 @@ class Fenster:
         """
         pygame.display.set_caption(titel)
 
-    def registriere_wird_beendet(self, funktion):
-        """
-        Registriert eine Funktion, die aufgerufen wird, wenn das self beendet wird.
-
-        :param funktion: Die Funktion
-        :type funktion: (object)->None
-        """
-        self._wird_beendet.registriere(funktion)
-
-    def registriere_aktualisierung(self, funktion):
-        """
-        Setzt die Funktion, die einmal pro self Update-Durchlauf aufgerufen wird, in der self-Objekte
-        aktualisiert werden können.
-
-        :param funktion: die Aktualisierungsfunktion
-        :type funktion: (float) -> None
-        """
-        self.__aktualisiere.registriere(funktion)
-
-    def entferne_aktualisierung(self, funktion):
-        """
-        Entfernt die Aktualisierugsfunktion.
-
-        :param funktion: Die Funktion, die entfernt werden soll.
-        :type funktion: (object) -> None
-        """
-        self.__aktualisiere.entferne(funktion)
-
     def zeichne_gitter(self, groesse=50, zahlen=True):
         gitter = Gitter(self.breite, self.hoehe, groesse=groesse, zahlen=zahlen)
 
 
 class VollbildFenster(Fenster):
-    def __init__(self, titel="", aktualisierungs_funktion=lambda zeit: None, flags=0, index=0):
+    def __init__(self, titel="", flags=0, index=0):
         groessen = pygame.display.list_modes()
         w, h = groessen[index]
         print("Verwende Bildschirmgröße: %dx%d", w, h)
 
-        super().__init__(w, h, titel, aktualisierungs_funktion,
-                         flags=flags | pygame.FULLSCREEN)
+        super().__init__(w, h, titel, flags=flags | pygame.FULLSCREEN)

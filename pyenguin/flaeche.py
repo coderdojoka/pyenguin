@@ -47,16 +47,11 @@ def klone_pygame_flaeche(pyg_flaeche, alpha=False):
     return flaeche
 
 
-class Flaeche(BewegbaresSzenenDing):
-    """
-    Eine einfach Fläche, auf der gezeichnet werden kann.
-    Eine Fläche hat eine feste Breite und Höhe.
-    """
-
-    def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=True, elter=None):
+class Leinwand(object):
+    def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=True):
         """
-        Erstellt eine neue Fläche mit entweder der angegebenen Breite und Höhe,
-        oder von der übergegebnen pyg_flaeche.
+        Erstellt eine neue Leinwand mit entweder der angegebenen Breite und Höhe,
+        oder von der übergebenen pyg_flaeche.
 
         :param breite: Die Breite der Fläche
         :type breite: int
@@ -66,10 +61,7 @@ class Flaeche(BewegbaresSzenenDing):
         :type pyg_flaeche: pygame.Surface
         :param transparent: Falls die Fläche transparent erstellt werden soll.
         :type transparent: bool
-        :param elter: Das Elternobjekt in der Hierachie
-        :type elter:
         """
-        BewegbaresSzenenDing.__init__(self, breite, hoehe, elter)
 
         self.ausschnitt = None
 
@@ -77,45 +69,6 @@ class Flaeche(BewegbaresSzenenDing):
             pyg_flaeche = neue_pygame_flaeche(breite, hoehe, alpha=transparent)
 
         self.pyg_flaeche = pyg_flaeche
-        self.original_pyg_flaeche = pyg_flaeche
-        self.winkel = 0
-        self.skalierung = 1
-
-    def setze_rotation(self, winkel):
-        """
-        Rotiert das Objekt um den angegeben Winkel.
-        :param winkel:
-        :type winkel:
-        :return:
-        :rtype:
-        """
-        self.winkel = winkel
-        print(winkel)
-        self._rotiere_und_skaliere()
-
-    def rotiere(self, winkel):
-        """
-        Rotiert das Objekt um den angegeben Winkel. Vorherige Rotationen werden mit in Betracht gezogen!
-        :param winkel:
-        :type winkel:
-        :return:
-        :rtype:
-        """
-        self.winkel += winkel
-        self._rotiere_und_skaliere()
-
-    def _rotiere_und_skaliere(self):
-        if self.original_pyg_flaeche == self.pyg_flaeche:
-            self.pyg_flaeche = klone_pygame_flaeche(self.original_pyg_flaeche, True)
-
-        self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel, self.skalierung)
-
-        # das umgebende Rechteck hat sich geändert => Bild Zentrum anpassen
-        w, h = self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height()
-        self.setze_dimension(w, h)
-
-    def zeichne(self, flaeche):
-        flaeche.pyg_flaeche.blit(self.pyg_flaeche, self)
 
     def fuelle(self, farbe):
         self.pyg_flaeche.fill(farbe)
@@ -172,9 +125,6 @@ class Flaeche(BewegbaresSzenenDing):
     def linien(self, punkte, farbe, geschlossen):
         return pygame.draw.aalines(self.pyg_flaeche, farbe, geschlossen, punkte, True)
 
-
-
-
     def als_bild_speichern(self, pfad):
         """
         Speichert den aktuell gezeichneten Inhalt in einem PNG-Bild.
@@ -186,12 +136,96 @@ class Flaeche(BewegbaresSzenenDing):
         import pygame
         pygame.image.save(self.pyg_flaeche, pfad)
 
-    def zeichne(self, flaeche):
-        flaeche.pyg_flaeche.blit(self.pyg_flaeche, (self.welt_x_off + self.links, self.welt_y_off + self.oben),
-                                 self.ausschnitt)
 
-    def __hash__(self):
-        return self.name.__hash__()
+class Flaeche(BewegbaresSzenenDing, Leinwand):
+    """
+    Eine einfach Fläche, auf der gezeichnet werden kann.
+    Eine Fläche hat eine feste Breite und Höhe.
+    """
+
+    def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=True, szene=None):
+        """
+        Erstellt eine neue Fläche mit entweder der angegebenen Breite und Höhe,
+        oder von der übergegebnen pyg_flaeche.
+
+        :param breite: Die Breite der Fläche
+        :type breite: int
+        :param hoehe: Die Höhe der Fläche
+        :type hoehe: int
+        :param pyg_flaeche: (Optional) Die Fläche
+        :type pyg_flaeche: pygame.Surface
+        :param transparent: Falls die Fläche transparent erstellt werden soll.
+        :type transparent: bool
+        :param szene: Das Elternobjekt in der Hierachie
+        :type szene:
+        """
+        Leinwand.__init__(self, breite, hoehe, pyg_flaeche, transparent)
+        BewegbaresSzenenDing.__init__(self, breite, hoehe, szene=szene)
+
+        self.ausschnitt = None
+
+        self.original_pyg_flaeche = self.pyg_flaeche
+        self.winkel = 0
+        self.skalierung = 1
+
+    def setze_rotation(self, winkel):
+        """
+        Rotiert das Objekt um den angegeben Winkel.
+        :param winkel:
+        :type winkel:
+        :return:
+        :rtype:
+        """
+        self.winkel = winkel
+        print(winkel)
+        self._rotiere_und_skaliere()
+
+    def rotiere(self, winkel):
+        """
+        Rotiert das Objekt um den angegeben Winkel. Vorherige Rotationen werden mit in Betracht gezogen!
+        :param winkel:
+        :type winkel:
+        :return:
+        :rtype:
+        """
+        self.winkel += winkel
+        self._rotiere_und_skaliere()
+
+    def setze_skalierung(self, skalierung):
+        """
+        Rotiert das Objekt um den angegeben Winkel.
+        :param skalierung:
+        :type skalierung:
+        :return:
+        :rtype:
+        """
+        self.skalierung = skalierung
+        self._rotiere_und_skaliere()
+
+    def skaliere(self, skalierung):
+        """
+        Rotiert das Objekt um den angegeben Winkel. Vorherige Rotationen werden mit in Betracht gezogen!
+        :param skalierung:
+        :type skalierung:
+        :return:
+        :rtype:
+        """
+        self.skalierung *= skalierung
+        self._rotiere_und_skaliere()
+
+    def _rotiere_und_skaliere(self):
+        if self.original_pyg_flaeche == self.pyg_flaeche:
+            self.pyg_flaeche = klone_pygame_flaeche(self.original_pyg_flaeche, True)
+
+        self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel, self.skalierung)
+
+        # das umgebende Rechteck hat sich geändert => Bild Zentrum anpassen
+        w, h = self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height()
+        self.setze_dimension(w, h)
+
+    def zeichne(self, flaeche):
+        flaeche.pyg_flaeche.blit(self.pyg_flaeche, (self.welt_x_off + self.links,
+                                                    self.welt_y_off + self.oben), self.ausschnitt)
 
 
 class Schrift:
@@ -276,8 +310,7 @@ class Text(Flaeche):
         :param text: Der Text, der angezeigt werden soll
         :type text: str
         """
-        breite, hoehe = self.schrift.berechne_groesse(text)
-        self.setze_dimension(breite, hoehe)
-        self.text = text
 
+        self.text = text
         self.pyg_flaeche = self.schrift.render(self.text, True, self.farbe, self.hintergrund)
+        self.setze_dimension(self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height())

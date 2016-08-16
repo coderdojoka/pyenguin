@@ -22,10 +22,12 @@ BildSpeicher.lade_aus_paket("fliege_tot", ["gegner/fliege_tot.png"])
 
 f.bild("fliege_tot", 10, 10)
 
+
+
 af = Figur(BildSpeicher.gib("fliege_0"))
 af.neue_kostueme(BildSpeicher.gib("fliege_1"))
 
-aktuelles_fenster.registriere_aktualisierung(test)
+registriere_aktualisiere(test)
 Szene.fenster_szene.registriere_maus_geklickt(lambda x, y, b: print(x, y, b))
 Szene.fenster_szene.registriere_maus_bewegt(lambda x, y, e: af.setze_position(x, y))
 
@@ -33,7 +35,7 @@ Szene.fenster_szene.registriere_maus_bewegt(lambda x, y, e: af.setze_position(x,
 def unten(a):
     print(a)
     af.naechstes()
-
+# TODO: Position bei Figur!!!
 
 Szene.fenster_szene.registriere_taste_unten(T_LEER, unten)
 

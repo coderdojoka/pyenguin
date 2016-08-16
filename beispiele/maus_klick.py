@@ -33,9 +33,10 @@ def zeit_wieder_abgelaufen():
 
 def wenn_beendet():
     print("Fenster wird geschloßen.")
+    return True
 
 
-fenster.registriere_wird_beendet(wenn_beendet)
+fenster.darf_beendet_werden = wenn_beendet
 
 
 # In 1000 ms = 1s wird die Funktion zeit_abgelaufen ausgeführt
@@ -77,7 +78,7 @@ registriere_maus_geklickt(maus_gedrueckt)
 # Bindet die Funktion 'maus_bewegt' an das maus_bewegt-Ereignis
 registriere_maus_bewegt(maus_bewegt)
 
-dreieck.setze_bei_maus_klick(lambda x, y, e: dreieck.entferene())
+dreieck.setze_bei_maus_klick(lambda x, y, e: dreieck.entferne())
 
 # Hilfsgitter einblenden
 fenster.zeichne_gitter()

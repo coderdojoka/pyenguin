@@ -1,17 +1,17 @@
+from pyenguin.bild import BildAnimation, Bild, generiere_namen_liste
 from pyenguin.cursor import MausZeiger
-from pyenguin.szene import Gruppe
-from pyenguin.zeit import Warte
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.farben import *
 from pyenguin.fenster import Fenster, VollbildFenster
+from pyenguin.figur import Figur
 from pyenguin.flaeche import Flaeche, Text, Schrift
+from pyenguin.paket import *
 from pyenguin.sound import HintergrundMusik
 from pyenguin.speicher import BildSpeicher, SoundSpeicher
+from pyenguin.szene import Gruppe
 from pyenguin.szene import Szene
-from pyenguin.bild import BildAnimation, Bild, generiere_namen_liste
 from pyenguin.tasten import *
-from pyenguin.figur import Figur
-from pyenguin.paket import *
+from pyenguin.zeit import Warte
 
 __author__ = 'Mark Weinreuter'
 
@@ -180,7 +180,7 @@ def entferene_maus_losgelassen(funktion):
     :param funktion: Die Funktion
     :type funktion: (object)->None
     """
-    Szene.aktive_szene.entferene_maus_losgelassen(funktion)
+    Szene.aktive_szene.entferne_maus_losgelassen(funktion)
 
 
 def registriere_maus_geklickt(funktion):
@@ -203,12 +203,24 @@ def entferne_maus_geklickt(funktion):
     Szene.aktive_szene.entferne_maus_geklickt(funktion)
 
 
+def registriere_aktualisiere(funktion):
+    """
+        Registriert eine Funktion, die aufgerufen wird, wenn die Szene aktualisiert wird.
+
+        :param funktion:
+        :type funktion: (float)->None
+        """
+    Szene.aktive_szene.registriere_aktualisiere(funktion)
+
+
 __HANDLER_NAMEN = list(filter(lambda s: s.find("registriere_") > -1 or s.find("entferne_") > -1, globals().keys()))
 
-__all__ = [ "Bild", "BildAnimation", "generiere_namen_liste",
-    "BildSpeicher", "SoundSpeicher", "Figur", "Szene", "Fenster", "VollbildFenster", "Flaeche", "Gruppe",
-    "EreignisBearbeiter", "Schrift", "Text", "Rechteck", "Kreis", "Oval", "Vieleck",
-    "MausZeiger", "HintergrundMusik", "Warte"]
+__all__ = ["Bild", "BildAnimation", "generiere_namen_liste",
+           "BildSpeicher", "SoundSpeicher", "Figur", "Szene",
+           "Fenster", "VollbildFenster", "Flaeche", "Gruppe",
+           "EreignisBearbeiter", "Schrift", "Text", "Rechteck",
+           "Kreis", "Oval", "Vieleck",
+           "MausZeiger", "HintergrundMusik", "Warte"]
 
 __all__.extend(FARBEN_NAMEN)
 __all__.extend(TASTEN_NAMEN)

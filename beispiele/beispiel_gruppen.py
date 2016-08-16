@@ -9,7 +9,7 @@ g1 = Gruppe()
 g2 = Gruppe()
 g2.x = 100
 g1.y = 300
-g2.bewegung_x = .1
+g2.bewegung_x = .01
 # Gegenstände werden standardmäßig zur Fenster-Szene hinzugefügt!
 o = Oval(0, 0, 20, 20, BLAU)
 p = Vieleck([(10, 10), (15, 20), (20, 10)], GRAU)
@@ -37,5 +37,5 @@ def aktualisiere(dt):
         g2.bewegung_x *= -1
 
 
-fenster.registriere_aktualisierung(aktualisiere)
+registriere_aktualisiere(aktualisiere)
 fenster.starten()

@@ -5,50 +5,34 @@ from pyenguin.tasten import Taste
 __author__ = 'Mark Weinreuter'
 
 
-class SzenenDing(object):
+class Ding(object):
     """
-    Kleinste Einheit, die zu einer Szene gehört.
-    Diese hat einen Verweis, auf die dazugehörige Szene und ihr Elternelement.
-    Das Elternelement kann entweder die Szene sein oder eine beliebige Gruppe dieser Szene.
+    Kleinstes Ding, das gemalt und aktualisiert werden kann.
+
+    Es gehört zu einer Szene und hat einen eindeutigen Namen.
     """
+
     ANZAHL = 0
 
     @classmethod
-    def nummer(cls):
+    def neue_nummer(cls):
         cls.ANZAHL += 1
         return str(cls.ANZAHL)
 
-    def __init__(self, prefix=None, elter=None):
+    def __init__(self, szene, prefix=None):
         if prefix is None:
-            prefix = str(self.__class__.__name__)
-        self.name = prefix + SzenenDing.nummer()
+            prefix = self.__class__.__name__
 
+        self.name = prefix + Ding.neue_nummer()
+
+        self.szene = szene
         self.sichtbar = True
-        self.ist_entfernt = False
 
-        self.szene = None
-        """
-        Die Szene zu der dieses Objekt gehört.
+    def verstecke(self):
+        self.sichtbar = False
 
-        :type: szene.Szene
-        """
-
-        self.eltern_element = None
-        """
-        Die Szene oder Gruppe, in der dieses Element liegt.
-
-        :type: pyenguin.zeichnen.SzenenListe
-        """
-
-        # Setzt den Elternverweis
-        if elter is not None:
-            elter.dazu(self)
-        else:
-            Szene.fenster_szene.dazu(self)
-
-    def __del__(self):
-        if not self.ist_entfernt and self.eltern_element:
-            self.eltern_element.raus(self)
+    def zeige(self):
+        self.sichtbar = True
 
     def aktualisiere(self, dt):
         raise NotImplemented("Muss überschrieben werden!")
@@ -56,9 +40,68 @@ class SzenenDing(object):
     def zeichne(self, flaeche):
         raise NotImplemented("Muss überschrieben werden!")
 
-    def entferene(self):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+    def __hash__(self):
+        return self.name.__hash__()
+
+
+class SzenenDing(Ding):
+    """
+    Kleinste Einheit, die zu einer Szene gehört.
+
+    Diese hat einen Verweis, auf die dazugehörige Szene und ihr Eltern-Ding.
+    Das Eltern-Ding kann entweder die Szene sein oder eine beliebige Gruppe dieser Szene.
+    """
+
+    def __init__(self, szene=None):
+        """
+
+        :param szene: Die Szene, zu der dieses Ding gehört
+        :type szene: Szene
+        """
+
+        # Falls das Eltern-Ding nicht angegeben wurde, verwenden wir die Fenster-Szene
+        if szene is None:
+            szene = Szene.fenster_szene
+
+        Ding.__init__(self, szene.szene)
+
+        self.ist_entfernt = False
+        """
+        Flag, indem gespeichert wird, ob dieses Ding aktuell ein Eltern-Element hat oder nicht.
+
+        :type: bool
+        """
+
+        self.szene = szene
+        """
+        Die Szene zu der dieses Objekt gehört.
+
+        :type: Szene
+        """
+
+        # Der Verweis auf eltern_ding wird erst unten mittels .dazu(..) gesetzt
+        # Da dieses Ding noch nicht registriert ist
+
+        self.eltern_ding = None
+        """
+        Die Szene oder Gruppe, in der dieses Element liegt.
+
+        :type: SzenenListe
+        """
+
+        # Setzt den Eltern verweis
+        szene.initiales_dazu(self)
+
+    def entferne(self):
+        self.wird_entfernt()
         self.ist_entfernt = True
-        self.eltern_element.raus(self)
+        self.eltern_ding.raus(self)
 
     def wechsle_szene(self, s):
         """
@@ -78,9 +121,6 @@ class SzenenDing(object):
 
         # Wir müssen auf die Event-Bindungen achten!!
         s.dazu(self)
-        if self.bei_maus_klick:
-            self.szene.entferne_maus_klick_ding(self)
-            s.neues_maus_klick_ding(self)
 
     def wechsle_gruppe(self, gruppe):
 
@@ -92,7 +132,7 @@ class SzenenDing(object):
             print("Dieses Objekte und die Gruppe müssen zur gleichen Szene gehören!")
             return
 
-        if gruppe == self.eltern_element:
+        if gruppe == self.eltern_ding:
             print("Objekt ist schon Teil dieser Gruppe!")
             return
 
@@ -100,35 +140,41 @@ class SzenenDing(object):
         gruppe.dazu(self)
 
     def nach_vorne(self):
-        self.eltern_element.kind_elemente.remove(self)
-        self.eltern_element.kind_elemente.append(self)
+        if self.ist_entfernt:
+            print("Dieses Ding ist vom seinem Eltern-Ding entfernt worden!")
+            return
 
-    def __str__(self):
-        return self.name
+        self.eltern_ding.kind_dinge.remove(self)
+        self.eltern_ding.kind_dinge.append(self)
 
-    def __repr__(self):
-        return self.name
+    def wird_entfernt(self):
+        pass
 
-    def __hash__(self):
-        return self.name.__hash__()
+    def wurde_hinzugefuegt(self):
+        pass
 
 
 class BewegbaresSzenenDing(Bewegbar, SzenenDing):
-    def __init__(self, breite, hoehe, elter=None):
+    def __init__(self, breite, hoehe, szene=None):
+        Bewegbar.__init__(self, breite, hoehe)
+        SzenenDing.__init__(self, szene=szene)
+
         self.bei_maus_klick = None
 
-        SzenenDing.__init__(self, elter=elter)
-        Bewegbar.__init__(self, breite, hoehe)
-        if self.szene is not None:
-            self.setze_position(self.szene.breite / 2, self.szene.hoehe / 2)
+    def wird_entfernt(self):
+        self.szene.entferne_bei_maus_klick(self)
+
+    def wird_hinzugefuegt(self):
+        if self.bei_maus_klick is not None:
+            self.szene.registriere_bei_maus_klick(self)
 
     def setze_bei_maus_klick(self, funktion):
         self.bei_maus_klick = funktion
-        self.szene.neues_maus_klick_ding(self)
+        self.szene.registriere_bei_maus_klick(self)
 
     def entferne_bei_maus_klick(self):
-        self.bei_maus_klick = lambda: None
-        self.szene.entferne_maus_klick_ding(self)
+        self.bei_maus_klick = None
+        self.szene.entferne_bei_maus_klick(self)
 
     @property
     def abstand_rechts(self):
@@ -165,6 +211,12 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def zentriere(self):
         self.setze_position(self.szene.breite / 2, self.szene.hoehe / 2)
 
+    def zentriere_breite(self):
+        self.x = self.szene.breite / 2
+
+    def zentriere_hoehe(self):
+        self.y = self.szene.hoehe / 2
+
     def raus_links(self):
         return self.welt_x_off + self.links < 0
 
@@ -187,48 +239,105 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
         return self.ist_oben_raus() or self.ist_unten_raus()
 
     def __str__(self):
-        return self.name + ": Pos: %d(%d), %d(%d), %dx%d" % (self._x, self.welt_x_off, self._y, self.welt_y_off, self.width, self.height)
+        return self.name + ": Pos(Welt-Pos): %d(%d), %d(%d), %dx%d" % (self._x, self.welt_x_off, self._y, self.welt_y_off, self.width, self.height)
 
 
-class SzenenListe(object):
-    def __init__(self):
+class SzenenListe(SzenenDing):
+    def __init__(self, szene=None):
+        SzenenDing.__init__(self, szene)
 
-        self.kind_elemente = []
+        self.kind_dinge = []
         """
-        :type: list[SzenenDing]
+        Die Kind-Dinge, die zu diesem Ding gehören.
+
+        :type: list[BewegbaresSzenenDing]
         """
+
         self.anzahl = 0
+        """
+        Die Anzahl an Kind-Dingen. Sollte das gleiche sein wie: `len(self.kind_dinge)`.
 
-    def dazu(self, was):
-        if not isinstance(was, SzenenDing):
-            print("%s kann nicht hinzufügt werden!" % str(was))
+        """
+
+    def dazu(self, ding):
+        """
+        Fügt das übergebene Ding in die Liste hinzu, falls dies erlaubt ist.
+
+        Außerdem wird das Ding  on seinem vorherigen Eltern-Ding entfernt.
+        Die Szene wird auf die Szene des neuen Eltern-Dings gesetzt.
+
+        :param ding:
+        :type ding:
+        :return:
+        :rtype:
+        """
+
+        if not isinstance(ding, BewegbaresSzenenDing):
+            print("%s kann nicht hinzufügt werden!" % str(ding))
             return
 
-        if isinstance(was, Szene):
-            return
-
-        alte_liste = was.eltern_element
+        alte_liste = ding.eltern_ding
         if alte_liste is not None:
-            alte_liste.raus(was)
+            alte_liste.raus(ding)
 
-        self.kind_elemente.append(was)
+        self.kind_dinge.append(ding)
         self.anzahl += 1
 
-        was.eltern_element = self
-        was.szene = self.szene
+        # TODO!!!
+        # Das ist etwas dumm, da diese Klasse kein Szenending ist...
+        ding.eltern_ding = self
+        ding.szene = self.szene
+        ding.wurde_hinzugefuegt()
 
-    def raus(self, was):
-        if was in self.kind_elemente:
-            self.kind_elemente.remove(was)
+    def initiales_dazu(self, ding):
+        if isinstance(ding, Szene):
+            return
+
+        if not isinstance(ding, BewegbaresSzenenDing):
+            print("%s kann nicht hinzufügt werden!" % str(ding))
+            return
+
+        self.kind_dinge.append(ding)
+        ding.eltern_ding = self
+        ding.szene = self.szene
+
+    def raus(self, ding):
+        """
+        Entfernt das übergebene Ding aus der Liste, der Kind-Dinge,
+        falls das Ding in der Liste enthalten war.
+
+        :param ding: Das Ding, das entfernt werden soll
+        :type ding: BewegbaresSzenenDing
+        :return:
+        :rtype:
+        """
+        if ding in self.kind_dinge:
+            ding.wird_entfernt()
+            self.kind_dinge.remove(ding)
             self.anzahl -= 1
         else:
-            print("%s ist nicht in %s." % (str(was), str(self)))
+            print("%s ist nicht in %s und kann deshalb nicht entfernt werden!" % (str(ding), str(self)))
 
 
 class Gruppe(BewegbaresSzenenDing, SzenenListe):
-    def __init__(self, elter=None):
-        BewegbaresSzenenDing.__init__(self, 0, 0)
-        SzenenListe.__init__(self)
+    """
+    Eine Gruppe dient dazu eine Menge von Dingen zu gruppieren.
+
+    Achtung! Eine Gruppe hat keine Ausdehnung. D.h. eine Gruppe hat immer die
+    Breite und Höhe 0!
+
+    """
+
+    def __init__(self, szene=None):
+        BewegbaresSzenenDing.__init__(self, 0, 0, szene=szene)
+        SzenenListe.__init__(self, szene)
+
+    def entferne(self):
+        # Alle Kinder entfernen
+        for kind in self.kind_dinge:
+            kind.entferne()
+
+        super().entferne()
 
     def aktualisiere(self, dt):
         super().aktualisiere(dt)
@@ -236,7 +345,7 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
         x_off = self.welt_x_off + self._x
         y_off = self.welt_y_off + self._y
 
-        for element in self.kind_elemente:
+        for element in self.kind_dinge:
             element.welt_x_off = x_off
             element.welt_y_off = y_off
             element.aktualisiere(dt)
@@ -245,7 +354,7 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
         if not self.sichtbar:
             return
 
-        for element in self.kind_elemente:
+        for element in self.kind_dinge:
             if element.sichtbar and not element.ist_raus():
                 element.zeichne(flaeche)
 
@@ -264,7 +373,7 @@ class TopLevel:
 top = TopLevel()
 
 
-class Szene(SzenenDing, SzenenListe):
+class Szene(SzenenListe):
     """
     Eine Szene stellt einen Ausschnitt des Fensters da.
     Ein normales Program hat nur eine Szene, die das ganze Fenster füllt.
@@ -303,8 +412,9 @@ class Szene(SzenenDing, SzenenListe):
         szene.ereignis_weiterleiten = False
 
     def __init__(self, breite, hoehe, pyg_flaeche=None, transparent=False, farbe=None):
-        SzenenDing.__init__(self, elter=top)
-        SzenenListe.__init__(self)
+        # Benötigt, damit kein Unterschied zwischen Gruppen und Szenen
+        self.szene = self
+        SzenenListe.__init__(self, self)
 
         self.x = 0
         self.y = 0
@@ -313,6 +423,8 @@ class Szene(SzenenDing, SzenenListe):
         self.hoehe = hoehe
 
         self.farbe = farbe
+
+        self.aktualisierbare_dinge = []
 
         self.ereignis_weiterleiten = True
         self._alle_tasten_bearbeiter = EreignisBearbeiter()
@@ -341,24 +453,22 @@ class Szene(SzenenDing, SzenenListe):
         self._maus_losgelassen = EreignisBearbeiter()
         self._maus_bewegt = EreignisBearbeiter()
 
-        # Benötigt, damit kein Unterschied zwischen Gruppen und Szenen
-        self.szene = self
-        self.eltern_element = top
+        self._aktualisiere = EreignisBearbeiter()
 
         # Die Szene selbst zeichnet auf einer Fläche, die auf das Fenster gezeichnet wird.
-        from pyenguin.flaeche import Flaeche
-        self.flaeche = Flaeche(breite, hoehe, pyg_flaeche, transparent, top)
+        from pyenguin.flaeche import Leinwand
+        self.flaeche = Leinwand(breite, hoehe, pyg_flaeche, transparent)
 
         # globale Szenen liste
         Szene.szenen.append(self)
 
-    def neues_maus_klick_ding(self, was):
+    def registriere_bei_maus_klick(self, was):
         if isinstance(was, BewegbaresSzenenDing):
             self._maus_klick_dinge.append(was)
         else:
-            print("Kann %s nicht zu den Mausklickelement hinzufügen!" % str(was))
+            print("Kann %s nicht zu den Mausklick-Elementen hinzufügen!" % str(was))
 
-    def entferne_maus_klick_ding(self, was):
+    def entferne_bei_maus_klick(self, was):
         if was in self._maus_klick_dinge:
             self._maus_klick_dinge.remove(was)
 
@@ -367,7 +477,14 @@ class Szene(SzenenDing, SzenenListe):
             if self in Szene.szenen:
                 Szene.szenen.remove(self)
 
+    def aktualisiere(self, dt):
+        self._aktualisiere(dt)
+        # TODO: update aktualisieren
+
     def zeichne(self, dt):
+        if not self.sichtbar:
+            return
+
         self.zeichne_alles(dt)
         Szene.fenster_szene.flaeche.blit(self.flaeche, (self.x, self.y))
 
@@ -375,22 +492,30 @@ class Szene(SzenenDing, SzenenListe):
         if self.farbe is not None:
             self.flaeche.fuelle(self.farbe)
 
-        for ele in self.kind_elemente:
+        for ele in self.kind_dinge:
             ele.aktualisiere(dt)
             if ele.sichtbar:
                 ele.zeichne(self.flaeche)
 
     def mache_aktiv(self):
-        Szene.aktive_szene = self
+        Szene.setze_aktive_szene(self)
 
     def ist_aktiv(self):
         return self == Szene.aktive_szene
 
+    def wurde_aktiv(self):
+        pass
+
+    def wurde_inaktiv(self):
+        pass
+
     @classmethod
     def zeichne_szenen(cls, dt):
+        cls.fenster_szene.aktualisiere(dt)
         cls.fenster_szene.zeichne_alles(dt)
 
         for szene in cls.szenen:
+            szene.aktualisiere(dt)
             szene.zeichne(dt)
 
     @classmethod
@@ -414,20 +539,29 @@ class Szene(SzenenDing, SzenenListe):
         :type x:
         :param y:
         :type y:
-        :return: Die Szene mit den Koordinaten oder die Fensterszene
+        :return: Die Szene mit den Koordinaten oder die Fenster-Szene
         :rtype:
         """
         for s in cls.szenen:
             from pyenguin.gitter import Gitter
-            if not isinstance(s, Gitter) and s.punkt_innerhalb(x, y):
+            if not isinstance(s, Gitter) and s.punkt_innerhalb(x, y) and s.sichtbar:
                 return s
         return Szene.fenster_szene
+
+    def verstecke(self):
+        super().verstecke()
+        Szene.setze_aktive_szene(Szene.fenster_szene)
+
+    def zeige(self):
+        super().zeige()
+        self.mache_aktiv()
 
     @classmethod
     def verarbeite_maus_bewegt(cls, ereignis):
         szene = cls.finde_szene(ereignis.pos[0], ereignis.pos[1])
         szene._maus_bewegt(ereignis.pos[0] - szene.x, ereignis.pos[1] - szene.y, ereignis)
 
+        # TODO: warum die erste bedinung??
         if Szene.aktive_szene == Szene.fenster_szene or Szene.aktive_szene.ereignis_weiterleiten:
             Szene.fenster_szene._maus_bewegt(ereignis.pos[0], ereignis.pos[1], ereignis)
 
@@ -566,7 +700,7 @@ class Szene(SzenenDing, SzenenListe):
 
     def entferne_maus_bewegt(self, funktion):
         """
-        Enfternt eine Funktion, die ausgeführt wird, wenn eine Maus-Taste gedrückt wird.
+        Entfernt eine Funktion, die ausgeführt wird, wenn eine Maus-Taste gedrückt wird.
         Wenn die Funktion aufgerufen wird, wird ihr ein Objekt übergeben, das so aufgebaut ist:
 
             button: 1-3 # welche Taste: 1 = Links, ...
@@ -586,7 +720,7 @@ class Szene(SzenenDing, SzenenListe):
         """
         self._maus_losgelassen.registriere(funktion)
 
-    def entferene_maus_losgelassen(self, funktion):
+    def entferne_maus_losgelassen(self, funktion):
         """
         Entfernt eine Funktion, die aufgerufen wird, wenn eine Maustaste losgelassen wird.
 
@@ -613,11 +747,36 @@ class Szene(SzenenDing, SzenenListe):
         """
         self._maus_geklickt.entferne(funktion)
 
+    def registriere_aktualisiere(self, funktion):
+        """
+        Setzt die Funktion, die einmal pro Update-Durchlauf aufgerufen wird,
+        in der Dinge aktualisiert werden können.
+
+        :param funktion: die Aktualisierungsfunktion
+        :type funktion: (float) -> None
+        """
+        self._aktualisiere.registriere(funktion)
+
+    def entferne_aktualisiere(self, funktion):
+        """
+        Entfernt die angegebene Aktualisierugsfunktion.
+
+        :param funktion: Die Funktion, die entfernt werden soll.
+        :type funktion: (object) -> None
+        """
+        self._aktualisiere.entferne(funktion)
+
     def punkt_innerhalb(self, x, y):
         links = (self.x <= x <= (self.x + self.breite))
         oben = (self.y <= y <= (self.y + self.hoehe))
 
         return links and oben
+
+    @classmethod
+    def setze_aktive_szene(cls, szene):
+        cls.aktive_szene.wurde_inaktiv()
+        cls.aktive_szene = szene
+        cls.aktive_szene.wurde_aktiv()
 
 
 if __name__ == "__main__":
@@ -634,5 +793,5 @@ if __name__ == "__main__":
     print(b)
 
     b._x_bewegung = 10
-    b.name = "Boxi"
+    b.name = "Box"
     print(b)
