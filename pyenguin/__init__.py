@@ -212,6 +212,14 @@ def registriere_aktualisiere(funktion):
         """
     Szene.aktive_szene.registriere_aktualisiere(funktion)
 
+def entferne_aktualisiere(funktion):
+    """
+        Entfernt eine Funktion, die aufgerufen wird, wenn die Szene aktualisiert wird.
+
+        :param funktion:
+        :type funktion: (float)->None
+        """
+    Szene.aktive_szene.entferne_aktualisiere(funktion)
 
 __HANDLER_NAMEN = list(filter(lambda s: s.find("registriere_") > -1 or s.find("entferne_") > -1, globals().keys()))
 

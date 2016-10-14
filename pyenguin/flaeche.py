@@ -107,7 +107,7 @@ class Leinwand(object):
         pyg_bild = BildSpeicher.gib_pygame_bild(schluessel)
         self.pyg_flaeche.blit(pyg_bild, (x, y))
 
-    def rechteck(self, x, y, breite, hoehe, farbe, dicke):
+    def rechteck(self, x, y, breite, hoehe, farbe, dicke=0):
         pygame.draw.rect(self.pyg_flaeche, farbe, (x, y, breite, hoehe), dicke)
 
     def kreis(self, x, y, radius, farbe, dicke=0):
@@ -295,13 +295,20 @@ class Text(Flaeche):
         breite, hoehe = schrift.berechne_groesse(text)
 
         self.schrift = schrift
-        self.text = text
-        self.hintergrund = hintergrund
-        self.farbe = farbe
+        self.__text = text
+        self.__hintergrund = hintergrund
+        self.__farbe = farbe
 
-        pyg_flaeche = schrift.render(self.text, True, self.farbe, self.hintergrund)
+        pyg_flaeche = schrift.render(self.__text, True, self.__farbe, self.__hintergrund)
 
         super().__init__(breite, hoehe, pyg_flaeche=pyg_flaeche)
+
+    def setze_farbe(self, farbe):
+        self.__farbe = farbe
+        self.setze_text(self.__text)
+
+    def gib_farbe(self):
+        return self.__farbe
 
     def setze_text(self, text):
         """
@@ -311,6 +318,6 @@ class Text(Flaeche):
         :type text: str
         """
 
-        self.text = text
-        self.pyg_flaeche = self.schrift.render(self.text, True, self.farbe, self.hintergrund)
+        self.__text = text
+        self.pyg_flaeche = self.schrift.render(self.__text, True, self.__farbe, self.__hintergrund)
         self.setze_dimension(self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height())

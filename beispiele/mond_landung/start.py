@@ -45,7 +45,7 @@ mond = GMond(100000, (fh - 50) / 2, .02)
 planet = GPlanet(100000)
 
 simu = GSimulation(planet, mond)
-for i in range(0, 1000):
+for i in range(0, 10000):
     f = random.randint(30, 80)
     a = random.randint(-40, 40)
     simu.neue_grakete(f, a)
@@ -55,6 +55,8 @@ spielSzene.dazu(simu.gruppe)
 
 simu.gruppe.zentriere()
 
+
+HintergrundMusik.weiter()
 
 def aktualisiere(dt):
     simu.naechster_schritt()

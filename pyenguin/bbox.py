@@ -94,6 +94,24 @@ class Box(pygame.Rect):
         self.x = wert + self._halbe_breite
 
     @property
+    def links_unten(self):
+        return self.links, self.unten
+
+    @links_unten.setter
+    def links_unten(self, wert):
+        self.x = wert[0] + self._halbe_breite
+        self.y = wert[1] - self._halbe_hoehe
+
+    @property
+    def rechts_unten(self):
+        return self.links, self.unten
+
+    @rechts_unten.setter
+    def rechts_unten(self, wert):
+        self.x = wert[0] - self._halbe_breite
+        self.y = wert[1] - self._halbe_hoehe
+
+    @property
     def rechts(self):
         return self._x + self._halbe_breite
 
@@ -107,7 +125,7 @@ class Box(pygame.Rect):
 
     @oben.setter
     def oben(self, wert):
-        self._y = wert + self._halbe_hoehe
+        self.y = wert + self._halbe_hoehe
 
     @property
     def unten(self):
@@ -115,7 +133,7 @@ class Box(pygame.Rect):
 
     @unten.setter
     def unten(self, wert):
-        self._y = wert - self._halbe_hoehe
+        self.y = wert - self._halbe_hoehe
 
     def setze_position(self, x, y):
         self._x = x
