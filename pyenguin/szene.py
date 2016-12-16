@@ -23,7 +23,8 @@ class Ding(object):
         if prefix is None:
             prefix = self.__class__.__name__
 
-        self.name = prefix + Ding.neue_nummer()
+        self.nummer = Ding.neue_nummer()
+        self.name = prefix + self.nummer
 
         self.szene = szene
         self.sichtbar = True
@@ -48,6 +49,9 @@ class Ding(object):
 
     def __hash__(self):
         return self.name.__hash__()
+
+    def __eq__(self, other):
+        return isinstance(other, Ding) and self.nummer == other.nummer
 
 
 class SzenenDing(Ding):
@@ -158,7 +162,6 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def __init__(self, breite, hoehe, szene=None):
         Bewegbar.__init__(self, breite, hoehe)
         SzenenDing.__init__(self, szene=szene)
-
         self.bei_maus_klick = None
 
     def wird_entfernt(self):
@@ -241,6 +244,8 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def __str__(self):
         return self.name + ": Pos(Welt-Pos): %d(%d), %d(%d), %dx%d" % (self._x, self.welt_x_off, self._y, self.welt_y_off, self.width, self.height)
 
+    def __eq__(self, other):
+        return isinstance(other, BewegbaresSzenenDing) and self.nummer == other.nummer
 
 class SzenenListe(SzenenDing):
     def __init__(self, szene=None):
