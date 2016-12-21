@@ -168,41 +168,42 @@ class Flaeche(BewegbaresSzenenDing, Leinwand):
         self.winkel = 0
         self.skalierung = 1
 
-    def setze_rotation(self, winkel):
+    def setze_rotation(self, winkel, smooth=True):
         """
-        Rotiert das Objekt um den angegeben Winkel.
+        Rotiert das Objekt auf den angegeben Winkel.
         :param winkel:
         :type winkel:
         :return:
         :rtype:
         """
         self.winkel = winkel
-        print(winkel)
-        self._rotiere_und_skaliere()
+        self._rotiere_und_skaliere(smooth)
 
-    def rotiere(self, winkel):
+    def rotiere(self, winkel, smooth=True):
         """
         Rotiert das Objekt um den angegeben Winkel. Vorherige Rotationen werden mit in Betracht gezogen!
+
         :param winkel:
         :type winkel:
         :return:
         :rtype:
         """
         self.winkel += winkel
-        self._rotiere_und_skaliere()
+        self._rotiere_und_skaliere(smooth)
 
-    def setze_skalierung(self, skalierung):
+    def setze_skalierung(self, skalierung, smooth=True):
         """
-        Rotiert das Objekt um den angegeben Winkel.
+        Skaliert das Objekt auf den angegeben Wert.
+
         :param skalierung:
         :type skalierung:
         :return:
         :rtype:
         """
         self.skalierung = skalierung
-        self._rotiere_und_skaliere()
+        self._rotiere_und_skaliere(smooth)
 
-    def skaliere(self, skalierung):
+    def skaliere(self, skalierung, smooth=True):
         """
         Rotiert das Objekt um den angegeben Winkel. Vorherige Rotationen werden mit in Betracht gezogen!
         :param skalierung:
@@ -211,13 +212,32 @@ class Flaeche(BewegbaresSzenenDing, Leinwand):
         :rtype:
         """
         self.skalierung *= skalierung
-        self._rotiere_und_skaliere()
+        self._rotiere_und_skaliere(smooth)
 
-    def _rotiere_und_skaliere(self):
+    def setze_rotation_und_skalierung(self, winkel, skalierung, smooth=True):
+        """
+        Skaliert und rotiert das Objekt auf den angegeben Wert.
+
+        :param winkel:
+        :type winkel:
+        :param skalierung:
+        :type skalierung:
+        :return:
+        :rtype:
+        """
+        self.winkel = winkel
+        self.skalierung = skalierung
+        self._rotiere_und_skaliere(smooth)
+
+    def _rotiere_und_skaliere(self, smooth=True):
         if self.original_pyg_flaeche == self.pyg_flaeche:
             self.pyg_flaeche = klone_pygame_flaeche(self.original_pyg_flaeche, True)
 
-        self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel, self.skalierung)
+        if smooth:
+            self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel , self.skalierung)
+        else:
+            self.pyg_flaeche = pygame.transform.scale(self.pyg_flaeche, self.dimension() * self.skalierung)
+            self.pyg_flaeche = pygame.transform.rotate(self.original_pyg_flaeche, self.winkel)
 
         # das umgebende Rechteck hat sich geändert => Bild Zentrum anpassen
         w, h = self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height()
