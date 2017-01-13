@@ -55,7 +55,7 @@ def Vieleck(punkte, farbe, dicke=0):
     return f
 
 
-def Linie(px, py, qx, qy, farbe, dicke=0):
+def Linie(px, py, qx, qy, farbe, dicke=1):
     minx = min(px, qx)
     miny = min(py, qy)
     maxx = max(px, qx) - minx
@@ -227,8 +227,8 @@ __all__ = ["Bild", "BildAnimation", "generiere_namen_liste",
            "BildSpeicher", "SoundSpeicher", "Figur", "Szene",
            "Fenster", "VollbildFenster", "Flaeche", "Gruppe",
            "EreignisBearbeiter", "Schrift", "Text", "Rechteck",
-           "Kreis", "Oval", "Vieleck",
-           "MausZeiger", "HintergrundMusik", "Warte"]
+           "Kreis", "Oval", "Vieleck", "Linie",
+           "MausZeiger", "HintergrundMusik", "Warte", "FARBEN_NAMEN"]
 
 __all__.extend(FARBEN_NAMEN)
 __all__.extend(TASTEN_NAMEN)

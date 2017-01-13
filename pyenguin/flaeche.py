@@ -1,5 +1,6 @@
 import pygame
 import pygame.font
+
 from pyenguin.szene import BewegbaresSzenenDing
 
 __author__ = 'Mark Weinreuter'
@@ -234,7 +235,7 @@ class Flaeche(BewegbaresSzenenDing, Leinwand):
             self.pyg_flaeche = klone_pygame_flaeche(self.original_pyg_flaeche, True)
 
         if smooth:
-            self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel , self.skalierung)
+            self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel, self.skalierung)
         else:
             self.pyg_flaeche = pygame.transform.scale(self.pyg_flaeche, self.dimension() * self.skalierung)
             self.pyg_flaeche = pygame.transform.rotate(self.original_pyg_flaeche, self.winkel)
@@ -309,6 +310,18 @@ class Text(Flaeche):
     """
 
     def __init__(self, text, schrift=None, farbe=(0, 0, 0), hintergrund=None):
+        """
+        Erstellt einen Text, der angezeigt wird.
+
+        :param text: Der angezeigte Text
+        :type text: str
+        :param schrift: Gewünschte Schrift (optional)
+        :type schrift: Schrift
+        :param farbe: Schriftfarbe (optional, Schwarz ist Standard)
+        :type farbe: tuple(int)
+        :param hintergrund: Hintergrundfarbe (optional)
+        :type hintergrund:
+        """
         if schrift is None:
             schrift = Schrift.gib_standard_schrift()
 
@@ -323,8 +336,22 @@ class Text(Flaeche):
 
         super().__init__(breite, hoehe, pyg_flaeche=pyg_flaeche)
 
-    def setze_farbe(self, farbe):
+    def setze_farbe(self, farbe, hintergrund=(-1, -1, -1)):
+        """
+        Ändert die Textfarbe und ggf. die Hintergrundfarbe.
+
+        :param farbe:
+        :type farbe:
+        :param hintergrund: Hintergrundfarbe (optional)
+        :type hintergrund:
+
+        :return:
+        :rtype:
+        """
         self.__farbe = farbe
+        if hintergrund != (-1, -1, -1):
+            self.__hintergrund = hintergrund
+
         self.setze_text(self.__text)
 
     def gib_farbe(self):
@@ -333,6 +360,7 @@ class Text(Flaeche):
     def setze_text(self, text):
         """
         Ändert den angezeigten Text und damit auch die Größe der Fläche.
+        **Achtung**: Dies ändert die Position des Textes! Der Text muss neu positioniert werden.
 
         :param text: Der Text, der angezeigt werden soll
         :type text: str

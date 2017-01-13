@@ -1,6 +1,6 @@
 from pyenguin import *
 
-fenster = Fenster(200, 200)
+fenster = Fenster(400, 200)
 
 BildSpeicher.lade("TEST", "Strasse_T-Kreuzung.png")
 test = BildSpeicher.gib("TEST")
@@ -20,12 +20,16 @@ test.setze_rotation(45, False)
 print(test.dimension())
 test.als_bild_speichern("test_bild_45_normal.png")
 
-test.setze_rotation(45)
-print(test.dimension())
-test.als_bild_speichern("test_bild_45_aa.png")
 
-test.skaliere(2)
-print(test.dimension())
-test.als_bild_speichern("test_bild_45_x2_aa.png")
+# Zweites Bild anzeigen
+test2 = BildSpeicher.gib("TEST")
+test2.setze_rotation(45, True)
+print(test2.dimension())
+test2.als_bild_speichern("test_bild_45_aa.png")
+
+# Zweites Bild rechts neben dem ersten Bild
+test2.links = test.rechts + 10
+test2.oben = test.oben
+
 
 fenster.starten()
