@@ -6,9 +6,8 @@ __author__ = 'Mark Weinreuter'
 # Fenster mit Größe und Titel erstellen
 fenster = Fenster(600, 300, "Hallo Warte")
 
-# kleines Rechteck
+# eine bemalbare Fläche
 f = Flaeche(100, 100)
-
 
 
 def zeit_um():
