@@ -1,4 +1,5 @@
 import pygame
+
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.flaeche import Flaeche
 from pyenguin.speicher import BildSpeicher
@@ -49,18 +50,20 @@ class BildAnimation(Flaeche):
     """
 
     def __init__(self, pygame_flaechen, wiederhole=False,
-                 alpha=True, anzeige_dauer=STANDARD_ZEIT):
+                 alpha=True, anzeige_dauer=STANDARD_ZEIT, skalierung=1):
         """
         Ein neues Animationsobjekt.
 
         :param pygame_flaechen:
         :type pygame_flaechen: list[str|pygame.Surface]
-        :param wiederhole:
+        :param wiederhole: soll die Animation wiederholt werden?
         :type wiederhole: bool
-        :param alpha:
+        :param alpha: Falls das Bild aus dem BildSpeicher geladen werden soll, mit oder ohne Alpha-Kannal
         :type alpha: bool
-        :param anzeige_dauer:
+        :param anzeige_dauer: Die Anzeigedauer pro Bild
         :type anzeige_dauer: float
+        :param skalierung: Die Skalierung aller Bilder dieser Animation
+        :type skalierung: float
         :return:
         :rtype:
         """
@@ -103,6 +106,9 @@ class BildAnimation(Flaeche):
             # oder schon eine pygame surface sein
             elif not isinstance(zf, pygame.Surface):
                 raise AttributeError("Entweder Surface oder Strings übergeben.")
+
+            if skalierung != 1:
+                zf = pygame.transform.rotozoom(zf,0, skalierung)
 
             # die größten werte ermitteln
             if zf.get_width() > breite:

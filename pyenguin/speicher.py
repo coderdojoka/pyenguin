@@ -118,13 +118,13 @@ class _BildSpeicher(_Speicher):
         """
 
         if not existiert_datei(pfad):
-            raise AttributeError("Die Datei '%s' existiert nicht." % pfad)
+            raise AttributeError("BILDSPEICHER: Die Datei '%s' existiert nicht." % pfad)
 
         try:
             pyg_bild = pygame.image.load(pfad)
         except pygame.error as e:
-            print("Fehler beim Laden des Bildes: ", e)
-            raise AttributeError("Das Bild: %s konnte nicht geladen werden!" % pfad)
+            print("BILDSPEICHER: Fehler beim Laden des Bildes: ", e)
+            raise AttributeError("BILDSPEICHER: Das Bild: %s konnte nicht geladen werden!" % pfad)
 
         # laut Doku soll convert() aufgerufen werden?!
         if alpha:

@@ -17,23 +17,25 @@ BildSpeicher.lade_aus_paket("stehen", SPIELER_S1_STEHEN)
 b1 = Bild("stehen")
 b1.oben = 50
 
-b = BildAnimation(schluessel, wiederhole=True)
+Szene.aktive_szene.farbe = BLAU
+b = BildAnimation(schluessel, wiederhole=True, skalierung=.8)
+print("Größe", b.width, b.height)
 b.start()
-# b.bewegung_x = .1
 
-figur = Figur(b)
-figur.neue_kostueme(b1)
-figur.zentriere()
+f = Figur(b)
+f.neue_kostueme(b1)
+f.zentriere()
 
-figur.naechstes()
-figur.naechstes()
+f.naechstes()
+f.naechstes()
 
 
 def test(x, y, e):
-    figur.naechstes()
+    f.naechstes()
+    print(f.dimension())
 
 
-figur.setze_bei_maus_klick(test)
+f.setze_bei_maus_klick(test)
 
 # Das Fenster starten
 fenster.starten()

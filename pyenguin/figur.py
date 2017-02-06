@@ -6,6 +6,10 @@ __author__ = 'Mark Weinreuter'
 
 
 class Figur(Gruppe):
+    """
+    Ein Figur kann mehrere Bilder, oder BildAnimationen anzeigen und zwischen diesen hin- und herwechseln
+    """
+
     def __init__(self, objekte):
         self._aktuelles_objekt = None
         """
@@ -34,8 +38,9 @@ class Figur(Gruppe):
 
         for o in objekte:
             if not isinstance(o, Flaeche):
-                raise AttributeError("Kann %s (%s) nicht hinzufügen! Es muss eine Fläche sein." % (str(o), str(type(o))))
+                raise AttributeError("FIGUR: Kann %s (%s) nicht hinzufügen! Es muss eine Fläche sein." % (str(o), str(type(o))))
 
+            # Zentriert darstellen
             o.x = 0
             o.y = 0
             self.dazu(o)

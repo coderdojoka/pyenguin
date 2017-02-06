@@ -220,7 +220,16 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def zentriere_hoehe(self):
         self.y = self.szene.hoehe / 2
 
+    def ist_raus_links(self):
+        return self.welt_x_off + self.links < 0
+
+
     def raus_links(self):
+        """
+        VERALTET!!! ist_raus_links benutzen
+        :return:
+        :rtype:
+        """
         return self.welt_x_off + self.links < 0
 
     def ist_rechts_raus(self):

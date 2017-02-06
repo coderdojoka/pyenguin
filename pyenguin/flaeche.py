@@ -114,13 +114,13 @@ class Leinwand(object):
     def kreis(self, x, y, radius, farbe, dicke=0):
         pygame.draw.circle(self.pyg_flaeche, farbe, (int(x + radius), int(y + radius)), radius, dicke)
 
-    def oval(self, x, y, radius_breite, radius_hoehe, farbe, dicke=None):
+    def oval(self, x, y, radius_breite, radius_hoehe, farbe, dicke=0):
         pygame.draw.ellipse(self.pyg_flaeche, farbe, (x, y, radius_breite * 2, radius_hoehe * 2), dicke)
 
     def linie(self, start_x, start_y, ende_x, ende_y, farbe, dicke=1):
         pygame.draw.line(self.pyg_flaeche, farbe, (start_x, start_y), (ende_x, ende_y), dicke)
 
-    def vieleck(self, punkte, farbe, dicke=None):
+    def vieleck(self, punkte, farbe, dicke=0):
         return pygame.draw.polygon(self.pyg_flaeche, farbe, punkte, dicke)
 
     def linien(self, punkte, farbe, geschlossen):
@@ -237,7 +237,7 @@ class Flaeche(BewegbaresSzenenDing, Leinwand):
         if smooth:
             self.pyg_flaeche = pygame.transform.rotozoom(self.original_pyg_flaeche, self.winkel, self.skalierung)
         else:
-            self.pyg_flaeche = pygame.transform.scale(self.pyg_flaeche, self.dimension() * self.skalierung)
+            self.pyg_flaeche = pygame.transform.scale(self.pyg_flaeche, (int(self.width * self.skalierung), int(self.height * self.skalierung)))
             self.pyg_flaeche = pygame.transform.rotate(self.original_pyg_flaeche, self.winkel)
 
         # das umgebende Rechteck hat sich geändert => Bild Zentrum anpassen

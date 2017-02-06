@@ -4,6 +4,7 @@ __author__ = 'Mark Weinreuter'
 
 ball_x = .3
 ball_y = .1
+speed = .1
 
 
 def aktualisiere(dt):

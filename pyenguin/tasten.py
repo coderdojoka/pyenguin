@@ -78,4 +78,4 @@ T_PUNKT = K_PERIOD
 T_PLUS = K_PLUS
 T_MINUS = K_MINUS
 
-TASTEN_NAMEN = list(filter(lambda s: s.isupper(), globals().keys()))
+TASTEN_NAMEN = list(filter(lambda s: s[:2] == "T_", globals().keys()))
