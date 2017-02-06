@@ -5,28 +5,24 @@ __author__ = 'Mark Weinreuter'
 # Fenster mit Größe und Titel
 fenster = Fenster(640, 480, "Hallo Fenster")
 
-# Es kommen viele Bilder bereits mit.
-# Lade eine Bild in den BildSpeicher und gib im einen Namen
+# Generiere eine Liste von Namen. %02d wird durch die Zahlen: 01 ... 11 ersetzt
 namen_liste = generiere_namen_liste("spieler/p1_gehen/p1_%02d.png", 1, 11)
+# Lade alle Bilder auf einmal. Die Bilder kommen mit pyenguin mit!
+# => lade_aus_paket
 schluessel = BildSpeicher.lade_aus_paket("blocky", namen_liste)
 
 # Figur erstellen. Gib hier den Bildnamen im Speicher an
-# figur.wechsle_bilder()
-# figur.wechsle_bilder([0, 1])
 BildSpeicher.lade_aus_paket("stehen", SPIELER_S1_STEHEN)
 b1 = Bild("stehen")
-b1.oben = 50
 
 Szene.aktive_szene.farbe = BLAU
 b = BildAnimation(schluessel, wiederhole=True, skalierung=.8)
-print("Größe", b.width, b.height)
 b.start()
 
 f = Figur(b)
 f.neue_kostueme(b1)
 f.zentriere()
 
-f.naechstes()
 f.naechstes()
 
 
