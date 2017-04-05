@@ -55,7 +55,7 @@ class _Speicher:
         Listet alle vorhanden Bilder auf, die aus dem Paket geladen werden können.
         """
 
-        sounds = liste_dateien_rekursiv(self.resourcen_pfad, self.erlaubte_endungen)
+        sounds = liste_dateien_rekursiv(self.resourcen_pfad, self.erlaubte_endungen,start_ordner=ordner_pfad())
         liste_ausgeben(sounds)
 
     def paket_lizenzen(self):

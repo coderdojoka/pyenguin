@@ -223,7 +223,6 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def ist_raus_links(self):
         return self.welt_x_off + self.links < 0
 
-
     def raus_links(self):
         """
         VERALTET!!! ist_raus_links benutzen
@@ -235,14 +234,29 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
     def ist_rechts_raus(self):
         return self.welt_x_off + self.rechts > self.szene.breite
 
+    def ist_rechts_komplett_raus(self):
+        return self.welt_x_off + self.links > self.szene.breite
+
+    def ist_links_komplett_raus(self):
+        return self.welt_x_off + self.rechts < 0
+
     def ist_oben_raus(self):
         return self.welt_y_off + self.oben < 0
+
+    def ist_oben_komplett_raus(self):
+        return self.welt_y_off + self.unten < 0
 
     def ist_unten_raus(self):
         return self.welt_y_off + self.unten > self.szene.hoehe
 
+    def ist_unten_komplett_raus(self):
+        return self.welt_y_off + self.oben > self.szene.hoehe
+
     def ist_raus(self):
         return self.raus_links() or self.ist_rechts_raus() or self.ist_oben_raus() or self.ist_unten_raus()
+
+    def ist_komplett_raus(self):
+        return self.ist_links_komplett_raus() or self.ist_rechts_komplett_raus() or self.ist_oben_komplett_raus() or self.ist_unten_komplett_raus()
 
     def ist_linksrechts_raus(self):
         return self.raus_links() or self.ist_rechts_raus()
@@ -255,6 +269,7 @@ class BewegbaresSzenenDing(Bewegbar, SzenenDing):
 
     def __eq__(self, other):
         return isinstance(other, BewegbaresSzenenDing) and self.nummer == other.nummer
+
 
 class SzenenListe(SzenenDing):
     def __init__(self, szene=None):
@@ -337,8 +352,8 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
     """
     Eine Gruppe dient dazu eine Menge von Dingen zu gruppieren.
 
-    Achtung! Eine Gruppe hat keine Ausdehnung. D.h. eine Gruppe hat immer die
-    Breite und Höhe 0!
+    **Achtung!** Eine Gruppe hat keine Ausdehnung. D.h. eine Gruppe hat immer die
+    Breite und Höhe 0! Überprüfungen wie ist_raus() sind nicht sinnvoll!!
 
     """
 
@@ -364,12 +379,23 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
             element.welt_y_off = y_off
             element.aktualisiere(dt)
 
+    def ist_komplett_raus(self):
+        """
+        Diese Überprüfung macht für Gruppen keinen Sinn!!
+        Bitte nicht benutzen!!
+        
+        :return: 
+        :rtype: 
+        """
+        # Damit Gruppe immer gezeichnet werden und nicht zu früh als außerhalb angesehen werden
+        return False
+
     def zeichne(self, flaeche):
         if not self.sichtbar:
             return
 
         for element in self.kind_dinge:
-            if element.sichtbar and not element.ist_raus():
+            if element.sichtbar and not element.ist_komplett_raus():
                 element.zeichne(flaeche)
 
 
@@ -508,7 +534,7 @@ class Szene(SzenenListe):
 
         for ele in self.kind_dinge:
             ele.aktualisiere(dt)
-            if ele.sichtbar:
+            if ele.sichtbar and not ele.ist_komplett_raus():
                 ele.zeichne(self.flaeche)
 
     def mache_aktiv(self):
@@ -588,7 +614,9 @@ class Szene(SzenenListe):
         # Das Klick-Ereignis an alle aktiven Dinge weiterleiten
         for ele in Szene.aktive_szene._maus_klick_dinge:
             if ele.punkt_innerhalb(sx, sy):
+                ereignis.ding = ele
                 ele.bei_maus_klick(sx, sy, ereignis)
+                return
 
         Szene.aktive_szene._maus_geklickt(sx, sy, ereignis)
 
@@ -614,11 +642,11 @@ class Szene(SzenenListe):
 
         # Taste gedrückt
         # allgemeiner Bearbeiter
-        self._alle_tasten_bearbeiter(True, ereignis)
+        self._alle_tasten_bearbeiter(True, ereignis.key, ereignis)
 
     def _taste_unten(self, ereignis):
 
-        self._alle_tasten_bearbeiter(True, ereignis.key, ereignis.unicode)
+        self._alle_tasten_bearbeiter(True, ereignis.key, ereignis)
 
         # spezialisierter Handler
         if ereignis.key not in self._tasten:

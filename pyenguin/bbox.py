@@ -1,7 +1,5 @@
 import pygame
 
-from pyenguin.ereignis import EreignisBearbeiter
-
 __author__ = 'Mark Weinreuter'
 
 
@@ -205,6 +203,12 @@ class Bewegbar(Box):
     @property
     def welt_y(self):
         return self.welt_y_off + self._y
+
+    def punkt_innerhalb(self, point, py=None):
+        if py is None:
+            return Box.punkt_innerhalb(self, point[0] - self.welt_x_off, point[1] - self.welt_y_off)
+
+        return Box.punkt_innerhalb(self, point - self.welt_x_off, py - self.welt_y_off)
 
     def aktualisiere(self, dt):
         self.aendere_position(dt * self._x_bewegung, dt * self._y_bewegung)
