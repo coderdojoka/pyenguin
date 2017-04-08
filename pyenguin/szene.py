@@ -616,7 +616,6 @@ class Szene(SzenenListe):
             if ele.punkt_innerhalb(sx, sy):
                 ereignis.ding = ele
                 ele.bei_maus_klick(sx, sy, ereignis)
-                return
 
         Szene.aktive_szene._maus_geklickt(sx, sy, ereignis)
 
