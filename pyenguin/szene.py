@@ -362,10 +362,10 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
         SzenenListe.__init__(self, szene)
 
     def entferne(self):
-        # Alle Kinder entfernen
-        for kind in self.kind_dinge:
+        # Alle Kinder entfernen. Nie aus einer for-loop entfernen
+        tmp = self.kind_dinge[:]
+        for kind in tmp:
             kind.entferne()
-
         super().entferne()
 
     def aktualisiere(self, dt):
