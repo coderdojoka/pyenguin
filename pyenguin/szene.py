@@ -494,6 +494,7 @@ class Szene(SzenenListe):
         self._maus_bewegt = EreignisBearbeiter()
 
         self._aktualisiere = EreignisBearbeiter()
+        self.post_aktualisiere = []
 
         # Die Szene selbst zeichnet auf einer Fläche, die auf das Fenster gezeichnet wird.
         from pyenguin.flaeche import Leinwand
@@ -553,10 +554,14 @@ class Szene(SzenenListe):
     def zeichne_szenen(cls, dt):
         cls.fenster_szene.aktualisiere(dt)
         cls.fenster_szene.zeichne_alles(dt)
+        for callback in cls.fenster_szene.post_aktualisiere:
+            callback()
 
         for szene in cls.szenen:
             szene.aktualisiere(dt)
             szene.zeichne(dt)
+            for callback in szene.post_aktualisiere:
+                callback()
 
     @classmethod
     def verarbeite_taste_unten(cls, ereignis):
@@ -750,7 +755,7 @@ class Szene(SzenenListe):
         :param funktion: Die Funktion die aufgerufen werden soll, wenn eine Taste gedrückt wurde
         :type funktion: (object) -> None
         """
-        self._maus_bewegt.entferne(funktion)
+        self.post_aktualisiere.append(lambda: self._maus_bewegt.entferne(funktion))
 
     def registriere_maus_losgelassen(self, funktion):
         """
@@ -768,7 +773,7 @@ class Szene(SzenenListe):
         :param funktion: Die Funktion
         :type funktion: (object)->None
         """
-        self._maus_losgelassen.entferne(funktion)
+        self.post_aktualisiere.append(lambda: self._maus_losgelassen.entferne(funktion))
 
     def registriere_maus_geklickt(self, funktion):
         """
@@ -786,7 +791,7 @@ class Szene(SzenenListe):
         :param funktion:
         :type funktion: (object)->None
         """
-        self._maus_geklickt.entferne(funktion)
+        self.post_aktualisiere.append(lambda: self._maus_geklickt.entferne(funktion))
 
     def registriere_aktualisiere(self, funktion):
         """
@@ -805,7 +810,7 @@ class Szene(SzenenListe):
         :param funktion: Die Funktion, die entfernt werden soll.
         :type funktion: (object) -> None
         """
-        self._aktualisiere.entferne(funktion)
+        self.post_aktualisiere.append(lambda: self._aktualisiere.entferne(funktion))
 
     def punkt_innerhalb(self, x, y):
         links = (self.x <= x <= (self.x + self.breite))

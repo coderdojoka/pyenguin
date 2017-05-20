@@ -32,6 +32,5 @@ def test(x, y, e):
 
 
 f.setze_bei_maus_klick(test)
-
 # Das Fenster starten
 fenster.starten()

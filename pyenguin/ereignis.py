@@ -20,6 +20,7 @@ class EreignisBearbeiter(object):
             self.registrierte_bearbeiter.remove(bearbeiter)
         else:
             print("Bearbeiter war nicht registriert!")
+            return
 
         self.hat_bearbeiter = len(self.registrierte_bearbeiter) > 0
 
