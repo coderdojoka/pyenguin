@@ -1,6 +1,7 @@
 from pyenguin.bbox import Bewegbar
 from pyenguin.ereignis import EreignisBearbeiter
 from pyenguin.tasten import Taste
+import math
 
 __author__ = 'Mark Weinreuter'
 
@@ -378,6 +379,16 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
             element.welt_x_off = x_off
             element.welt_y_off = y_off
             element.aktualisiere(dt)
+
+    def rotiere(self, winkel):
+        cs = math.cos(winkel/180 * math.pi)
+        ss = math.sin(winkel / 180 * math.pi)
+
+        for element in self.kind_dinge:
+            x = element.x * cs - ss * element.y
+            y = element.x * ss + cs * element.y
+            element.setze_position( x,y)
+            element.rotiere(-winkel)
 
     def ist_komplett_raus(self):
         """
