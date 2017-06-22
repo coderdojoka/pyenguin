@@ -126,6 +126,7 @@ class SzenenDing(Ding):
             return
 
         # Wir müssen auf die Event-Bindungen achten!!
+
         s.dazu(self)
 
     def wechsle_gruppe(self, gruppe):
@@ -534,6 +535,7 @@ class Szene(SzenenListe):
         # globale Szenen liste
         Szene.szenen.append(self)
 
+
     def registriere_bei_maus_klick(self, was):
         if isinstance(was, BewegbaresSzenenDing):
             self._maus_klick_dinge.append(was)
@@ -648,10 +650,11 @@ class Szene(SzenenListe):
         sy = ereignis.pos[1] - Szene.aktive_szene.y
 
         # Das Klick-Ereignis an alle aktiven Dinge weiterleiten
-        for ele in Szene.aktive_szene._maus_klick_dinge:
-            if ele.punkt_innerhalb(sx, sy):
-                ereignis.ding = ele
-                ele.bei_maus_klick(sx, sy, ereignis)
+        if ereignis.button == 1: # Nur für Linksklicks
+            for ele in Szene.aktive_szene._maus_klick_dinge:
+                if ele.punkt_innerhalb(sx, sy):
+                    ereignis.ding = ele
+                    ele.bei_maus_klick(sx, sy, ereignis)
 
         Szene.aktive_szene._maus_geklickt(sx, sy, ereignis)
 

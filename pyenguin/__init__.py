@@ -11,6 +11,7 @@ from pyenguin.speicher import BildSpeicher, SoundSpeicher
 from pyenguin.szene import Gruppe
 from pyenguin.szene import Szene
 from pyenguin.tasten import *
+from pyenguin.text import FesteBreiteText
 from pyenguin.zeit import Warte
 
 __author__ = 'Mark Weinreuter'
@@ -212,6 +213,7 @@ def registriere_aktualisiere(funktion):
         """
     Szene.aktive_szene.registriere_aktualisiere(funktion)
 
+
 def entferne_aktualisiere(funktion):
     """
         Entfernt eine Funktion, die aufgerufen wird, wenn die Szene aktualisiert wird.
@@ -221,6 +223,7 @@ def entferne_aktualisiere(funktion):
         """
     Szene.aktive_szene.entferne_aktualisiere(funktion)
 
+
 __HANDLER_NAMEN = list(filter(lambda s: s.find("registriere_") > -1 or s.find("entferne_") > -1, globals().keys()))
 
 __all__ = ["Bild", "BildAnimation", "generiere_namen_liste",
@@ -228,7 +231,7 @@ __all__ = ["Bild", "BildAnimation", "generiere_namen_liste",
            "Fenster", "VollbildFenster", "Flaeche", "Gruppe",
            "EreignisBearbeiter", "Schrift", "Text", "Rechteck",
            "Kreis", "Oval", "Vieleck", "Linie",
-           "MausZeiger", "HintergrundMusik", "Warte", "FARBEN_NAMEN"]
+           "MausZeiger", "HintergrundMusik", "Warte", "FARBEN_NAMEN", "FesteBreiteText"]
 
 __all__.extend(FARBEN_NAMEN)
 __all__.extend(TASTEN_NAMEN)

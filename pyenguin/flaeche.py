@@ -169,6 +169,11 @@ class Flaeche(BewegbaresSzenenDing, Leinwand):
         self.winkel = 0
         self.skalierung = 1
 
+    def aendere_groesse(self, breite, hoehe, transparent=True):
+        self.pyg_flaeche = neue_pygame_flaeche(breite, hoehe, alpha=transparent)
+        self.original_pyg_flaeche = self.pyg_flaeche
+        self.setze_dimension(breite, hoehe)
+
     def setze_rotation(self, winkel, smooth=True):
         """
         Rotiert das Objekt auf den angegeben Winkel.

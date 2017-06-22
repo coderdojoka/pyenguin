@@ -68,6 +68,8 @@ def t_oben(e):
     ist_unten = False
 
 
+k1.setze_bei_maus_klick(lambda x,y,e: print("m"))
+
 registriere_taste_oben(T_LEER, t_oben)
 registriere_taste_unten(T_LEER, t_unten)
 registriere_aktualisiere(aktualisiere)
