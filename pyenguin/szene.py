@@ -670,17 +670,16 @@ class Szene(SzenenListe):
             Szene.fenster_szene._maus_losgelassen(ereignis.pos[0], ereignis.pos[1], ereignis)
 
     def _taste_oben(self, ereignis):
+
+        # Taste losgelassen
         # allgemeiner Bearbeiter
-        self._alle_tasten_bearbeiter(False, ereignis.key)
+        self._alle_tasten_bearbeiter(False, ereignis.key, ereignis)
 
         # spezialisierter Handler
         if ereignis.key in self._tasten:
             taste = self._tasten[ereignis.key]
             taste.wenn_oben(ereignis)
 
-        # Taste gedrückt
-        # allgemeiner Bearbeiter
-        self._alle_tasten_bearbeiter(True, ereignis.key, ereignis)
 
     def _taste_unten(self, ereignis):
 

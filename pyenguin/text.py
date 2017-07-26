@@ -4,7 +4,7 @@ __author__ = 'Mark Weinreuter'
 
 
 class FesteBreiteText(Flaeche):
-    def __init__(self, breite, schrift, text, hintergrund=WEISS, min_hoehe=0):
+    def __init__(self, breite, schrift, text, hintergrund=WEISS, min_hoehe=0, zusaetzliche_breite=0):
         self.zeilen = []
         self.zeilen_hoehe = []
         self.max_breite = breite
@@ -13,14 +13,15 @@ class FesteBreiteText(Flaeche):
         self.hintergrund = hintergrund
         self.min_hoehe = min_hoehe
         self.ignoriere_nach_umbruch = " \n\r"
-        super().__init__(breite, self.verarbeite_text())
+        self.zusaetzliche_breite = zusaetzliche_breite
+        super().__init__(breite + zusaetzliche_breite, self.verarbeite_text())
 
         self.male_text()
 
     def setze_text(self, text):
         self.anzeige_text = text
         h = self.verarbeite_text()
-        self.aendere_groesse(self.max_breite, h)
+        self.aendere_groesse(self.max_breite + self.zusaetzliche_breite, h)
         self.male_text()
 
     def verarbeite_text(self):
@@ -60,3 +61,8 @@ class FesteBreiteText(Flaeche):
             zeile = self.zeilen[i]
             self.text(zeile, 0, y, self.schrift)
             y += self.zeilen_hoehe[i]
+
+    def aendere_farbe(self, farbe):
+        self.hintergrund = farbe
+        self.fuelle(farbe)
+        self.male_text()
