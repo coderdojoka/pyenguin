@@ -6,6 +6,8 @@ from pyenguin.tasten import Taste
 
 __author__ = 'Mark Weinreuter'
 
+ANZAHL = 0
+
 
 class Ding(object):
     """
@@ -14,12 +16,12 @@ class Ding(object):
     Es gehört zu einer Szene und hat einen eindeutigen Namen.
     """
 
-    ANZAHL = 0
 
     @classmethod
     def neue_nummer(cls):
-        cls.ANZAHL += 1
-        return str(cls.ANZAHL)
+        global ANZAHL
+        ANZAHL += 1
+        return str(ANZAHL)
 
     def __init__(self, szene, prefix=None):
         if prefix is None:
@@ -431,6 +433,20 @@ class Gruppe(BewegbaresSzenenDing, SzenenListe):
                 element.zeichne(flaeche)
 
 
+class IgnoreGruppe(Gruppe):
+    def __init__(self,szene=None):
+        super().__init__(szene)
+
+    def aktualisiere_dimension(self):
+
+        min_x, min_y, max_x, max_y = 0, 0, 0, 0
+        for element in self.kind_dinge:
+            min_x, max_x = min(element.links, min_x), max(max_x, abs(element.rechts))
+            min_y, max_y = min(min_y, element.oben), max(max_y, element.unten)
+
+        self.setze_dimension(max_x - min_x, max_y - min_y)
+
+
 class TopLevel:
     def __init__(self):
         pass
@@ -535,7 +551,6 @@ class Szene(SzenenListe):
         # globale Szenen liste
         Szene.szenen.append(self)
 
-
     def registriere_bei_maus_klick(self, was):
         if isinstance(was, BewegbaresSzenenDing):
             self._maus_klick_dinge.append(was)
@@ -620,8 +635,8 @@ class Szene(SzenenListe):
         :return: Die Szene mit den Koordinaten oder die Fenster-Szene
         :rtype:
         """
-        for s in cls.szenen:
-            from pyenguin.gitter import Gitter
+        from pyenguin.gitter import Gitter
+        for s in reversed(cls.szenen):
             if not isinstance(s, Gitter) and s.punkt_innerhalb(x, y) and s.sichtbar:
                 return s
         return Szene.fenster_szene
@@ -650,7 +665,7 @@ class Szene(SzenenListe):
         sy = ereignis.pos[1] - Szene.aktive_szene.y
 
         # Das Klick-Ereignis an alle aktiven Dinge weiterleiten
-        if ereignis.button == 1: # Nur für Linksklicks
+        if ereignis.button == 1:  # Nur für Linksklicks
             for ele in Szene.aktive_szene._maus_klick_dinge:
                 if ele.punkt_innerhalb(sx, sy):
                     ereignis.ding = ele
@@ -679,7 +694,6 @@ class Szene(SzenenListe):
         if ereignis.key in self._tasten:
             taste = self._tasten[ereignis.key]
             taste.wenn_oben(ereignis)
-
 
     def _taste_unten(self, ereignis):
 

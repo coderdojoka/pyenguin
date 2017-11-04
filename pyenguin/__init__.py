@@ -8,7 +8,7 @@ from pyenguin.flaeche import Flaeche, Text, Schrift
 from pyenguin.paket import *
 from pyenguin.sound import HintergrundMusik
 from pyenguin.speicher import BildSpeicher, SoundSpeicher
-from pyenguin.szene import Gruppe
+from pyenguin.szene import Gruppe, IgnoreGruppe
 from pyenguin.szene import Szene
 from pyenguin.tasten import *
 from pyenguin.text import FesteBreiteText
@@ -230,7 +230,7 @@ __all__ = ["Bild", "BildAnimation", "generiere_namen_liste",
            "BildSpeicher", "SoundSpeicher", "Figur", "Szene",
            "Fenster", "VollbildFenster", "Flaeche", "Gruppe",
            "EreignisBearbeiter", "Schrift", "Text", "Rechteck",
-           "Kreis", "Oval", "Vieleck", "Linie",
+           "Kreis", "Oval", "Vieleck", "Linie", "IgnoreGruppe",
            "MausZeiger", "HintergrundMusik", "Warte", "FARBEN_NAMEN", "FesteBreiteText"]
 
 __all__.extend(FARBEN_NAMEN)
