@@ -249,6 +249,14 @@ class Flaeche(BewegbaresSzenenDing, Leinwand):
         w, h = self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height()
         self.setze_dimension(w, h)
 
+    def skaliere_direkt(self, sx, sy):
+        # TODO: das wird vermutlich schiefgehen, wenn man nachträglich noch rotieren will...
+        self.pyg_flaeche = pygame.transform.scale(self.pyg_flaeche, (int(self.width * sx), int(self.height * sy)))
+
+        # das umgebende Rechteck hat sich geändert => Bild Zentrum anpassen
+        w, h = self.pyg_flaeche.get_width(), self.pyg_flaeche.get_height()
+        self.setze_dimension(w, h)
+
     def zeichne(self, flaeche):
         flaeche.pyg_flaeche.blit(self.pyg_flaeche, (self.welt_x_off + self.links,
                                                     self.welt_y_off + self.oben), self.ausschnitt)

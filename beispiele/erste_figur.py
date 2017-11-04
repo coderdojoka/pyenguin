@@ -12,6 +12,5 @@ BildSpeicher.lade_aus_paket("blocky", "spieler/p1_stand.png")
 # Figur erstellen. Gib hier den Bildnamen im Speicher an
 figur = Figur(BildSpeicher.gib("blocky"))
 figur.zentriere()
-
 # Das Fenster starten
 fenster.starten()

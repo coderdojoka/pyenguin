@@ -1,5 +1,7 @@
 .cache/
 .idea/
 pyenguin.egg-info/
-
+build/
+dist/
+ideas_pyenguin.txt
 *.pyc

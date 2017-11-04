@@ -45,7 +45,7 @@ mond = GMond(100000, (fh - 50) / 2, .02)
 planet = GPlanet(100000)
 
 simu = GSimulation(planet, mond)
-for i in range(0, 100):
+for i in range(0, 1000):
     f = random.randint(30, 80)
     a = random.randint(-40, 40)
     simu.neue_grakete(f, a)
